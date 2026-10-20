@@ -1,0 +1,14 @@
+{
+  "en": {
+    "REGRA: tudo dentro de <pre> e de <code> é saída ou comando real do kit e fica IGUAL": "RULE: everything inside <pre> and <code> is real kit output or command (in Portuguese) and stays EXACTLY as is, untranslated (e.g. OK:, FALHA:, IGUAIS:, DIFEREM:, COSTURA: igual, COSTURA: diferente, FORA DA MARCA:, saída:, render:, npm:, tts:, transcribe:, palavras:, quadros em quadros/, com áudio, sem áudio, 4 seções, cores, regras de movimento, a composição usa só cores do DESIGN.md)",
+    "nomes de ferramentas e arquivos": "never translate tool and file names: HyperFrames, Remotion, GSAP, D3, Three.js, Lottie, Kokoro, whisper.cpp, FFmpeg, prompt, storyboard, frame, keyframe, render, lint, check, snapshot, timeline, data-start, data-duration, data-width, data-height, data-composition-id, data-no-timeline, interpolate, spring, useCurrentFrame, Composition, hf-seek, DESIGN.md, RISE, karaoke.py, conferir.py, conferir-design.py, costura.sh, comparar-quadros.sh, kit/, mulberry32",
+    "RISE": "RISE letters stay R, I, S, E; the four parts are References, Idea, Style, Examine",
+    "plano, quadro, conferidor": "\"plano\" in film sense = \"shot\"; \"quadro\" = \"frame\"; \"conferidor\" = \"checker\""
+  },
+  "es": {
+    "REGRA: tudo dentro de <pre> e de <code> é saída ou comando real do kit e fica IGUAL": "REGLA: todo lo que está dentro de <pre> y de <code> es salida o comando real del kit (en portugués) y queda EXACTAMENTE igual, sin traducir (ej.: OK:, FALHA:, IGUAIS:, DIFEREM:, COSTURA: igual, COSTURA: diferente, FORA DA MARCA:, saída:, render:, npm:, tts:, transcribe:, palavras:, quadros em quadros/, com áudio, sem áudio, 4 seções, cores, regras de movimento, a composição usa só cores do DESIGN.md)",
+    "nomes de ferramentas e arquivos": "no traducir nombres de herramientas y archivos: HyperFrames, Remotion, GSAP, D3, Three.js, Lottie, Kokoro, whisper.cpp, FFmpeg, prompt, storyboard, frame, keyframe, render, lint, check, snapshot, timeline, data-start, data-duration, data-width, data-height, data-composition-id, data-no-timeline, interpolate, spring, useCurrentFrame, Composition, hf-seek, DESIGN.md, RISE, karaoke.py, conferir.py, conferir-design.py, costura.sh, comparar-quadros.sh, kit/, mulberry32",
+    "RISE": "las letras de RISE quedan R, I, S, E; las cuatro partes son Referencias, Idea, Estilo, Examinar",
+    "plano, quadro, conferidor": "\"plano\" de cine = \"plano\"; \"quadro\" = \"fotograma\"; \"conferidor\" = \"verificador\""
+  }
+}

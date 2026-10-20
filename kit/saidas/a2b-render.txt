@@ -1,0 +1,10 @@
+  ◇ 0 errors, 0 warnings
+  ◇ 0 errors, 0 warnings
+  ◇ 0 issues across 9 sample(s)
+  ◇ 0 errors, 0 warnings
+  ◇ 7/7 text checks pass WCAG AA
+  ◇ disabled
+◇  Check passed
+render: 0
+OK: 5,0 s · 1920×1080 · 30 fps · sem áudio
+saída: 0

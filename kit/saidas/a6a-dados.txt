@@ -1,0 +1,4 @@
+◇  Check passed
+render: 0
+OK: 6,0 s · 1920×1080 · 30 fps · sem áudio
+saída: 0

@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script src="legendas.js"></script>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: #0c0c10; }
+      #root { width: 100%; height: 100%; position: relative; font-family: ui-sans-serif, system-ui, sans-serif; }
+      #luz { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 40%, #1c1c22 0%, #0c0c10 70%); }
+      #titulo { position: absolute; left: 0; right: 0; top: 300px; text-align: center; color: #f4f4f5; font-size: 110px; font-weight: 700; line-height: 1.1; }
+      .legenda { position: absolute; left: 0; right: 0; top: 820px; text-align: center; font-size: 70px; font-weight: 700; line-height: 1.2; color: #a1a1aa; opacity: 0; }
+      .legenda span { margin: 0 12px; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="8" data-width="1920" data-height="1080">
+      <div id="luz"></div>
+      <h1 id="titulo">Som no código</h1>
+      <audio id="narracao" src="narracao.wav" data-start="0.5" data-track-index="1"></audio>
+      <audio id="trilha" src="trilha.wav" data-start="0" data-duration="8" data-volume="0.25" data-track-index="2"></audio>
+    </div>
+    <script>
+      // legendas.js (gerado pelo karaoke.py) traz cada legenda com o tempo de cada palavra
+      const root = document.getElementById("root");
+      const tl = gsap.timeline({ paused: true });
+      tl.fromTo("#titulo", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" }, 0.1);
+      window.LEGENDAS.forEach((linha, i) => {
+        const el = document.createElement("p");
+        el.className = "legenda";
+        el.id = "legenda-" + i;
+        linha.palavras.forEach((p, j) => {
+          const s = document.createElement("span");
+          s.id = `palavra-${i}-${j}`;
+          s.textContent = p.t;
+          el.appendChild(s);
+          tl.set(s, { color: "#f4f4f5" }, p.inicio);   // a palavra acende quando é dita
+        });
+        root.appendChild(el);
+        tl.set(el, { opacity: 1 }, linha.inicio);
+        tl.set(el, { opacity: 0 }, linha.fim);
+      });
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

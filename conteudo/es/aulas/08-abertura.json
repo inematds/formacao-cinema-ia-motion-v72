@@ -1,0 +1,335 @@
+{
+  "slug": "abertura",
+  "num": 8,
+  "menu": "Tu pieza",
+  "titulo": "Tu pieza: apertura de 15 s en 16:9 y 9:16, renderizada y verificada",
+  "titulo_curto": "Tu apertura",
+  "minutos": 20,
+  "lead": "Es hora de juntar todo en una pieza que uses: una apertura de 15 s con tu DESIGN.md, en los dos formatos que piden las redes. El 9:16 no sale del 16:9 con una opción de render: es otra composición que reutiliza el CSS y la coreografía. En esta clase entregas las dos, verificadas por el kit, y armas el plan con fechas.",
+  "objetivo": "entregar una apertura de 15 s en 16:9 y 9:16, con el DESIGN.md, verificada por el kit en los dos formatos.",
+  "competencias": [
+    "compor-em-dois-formatos",
+    "reaproveitar-estilo-e-coreografia",
+    "conferir-entrega-final"
+  ],
+  "aprende": [
+    {
+      "icone": "camadas",
+      "t": "Un proyecto, dos composiciones: index.html y formatos/vertical.html"
+    },
+    {
+      "icone": "marca",
+      "t": "CSS y coreografía compartidos, solo cambia la medida"
+    },
+    {
+      "icone": "fila",
+      "t": "Cola de renders: uno por vez y retomar solo lo que falló"
+    },
+    {
+      "icone": "calendario",
+      "t": "El mapa del curso y tu plan con fechas"
+    }
+  ],
+  "hero_alt": "Dos monitores en una sala de edición oscura, uno en horizontal y otro en vertical, con el mismo fotograma de apertura.",
+  "secoes": [
+    {
+      "tipo": "mapa",
+      "titulo": "El mapa de tu pieza",
+      "sub": "Las cuatro entregas que reúne la apertura. Haz clic en un nivel para ver el \"listo cuando\".",
+      "degraus": [
+        {
+          "aula": "hyperframes",
+          "icone": "terminal",
+          "quando": "Paso 1",
+          "titulo": "Proyecto",
+          "sub": "init y render",
+          "saida": "Proyecto HyperFrames que renderiza y pasa el verificador.",
+          "passo": "El proyecto de la clase 2, con la versión fija y la telemetría desactivada. Es la carpeta donde vivirá la apertura."
+        },
+        {
+          "aula": "marca",
+          "icone": "marca",
+          "quando": "Paso 2",
+          "titulo": "Marca",
+          "sub": "DESIGN.md",
+          "saida": "DESIGN.md con las cuatro secciones y colores verificados.",
+          "passo": "El DESIGN.md de la clase 4 manda en los colores y en el movimiento de los dos formatos."
+        },
+        {
+          "aula": "rise",
+          "icone": "robo",
+          "quando": "Paso 3",
+          "titulo": "Pedido",
+          "sub": "RISE y fotogramas",
+          "saida": "Composición que hizo el agente y que tú verificaste en cinco fotogramas.",
+          "passo": "El pedido RISE de la clase 3, ahora para 15 s y dos formatos. La E incluye el check y los fotogramas de los dos."
+        },
+        {
+          "aula": "audio",
+          "icone": "megafone",
+          "quando": "Paso 4",
+          "titulo": "Sonido",
+          "sub": "opcional",
+          "saida": "Narración o pista en el código, verificada con --audio.",
+          "passo": "Si tu apertura tiene voz o banda sonora, la clase 7 pone el sonido. Si no, sáltala: el verificador dice \"sem áudio\" y tiene razón."
+        }
+      ],
+      "resultado": {
+        "titulo": "Al final del curso",
+        "texto": "Una apertura tuya en 16:9 y 9:16, con DESIGN.md, render local y verificada.",
+        "total": "24 ejercicios"
+      },
+      "legenda": "Las clases 1, 5 y 6 son la base: determinismo, Remotion y bibliotecas entran cuando tu pieza lo pida."
+    },
+    {
+      "tipo": "codigo",
+      "titulo": "La apertura en los dos formatos",
+      "sub": "abertura.css y abertura.js son compartidos; index.html (1920×1080) y formatos/vertical.html (1080×1920) solo cambian la raíz y una clase.",
+      "blocos": [
+        {
+          "rot": "Archivo · kit/exemplos/a8-abertura/abertura.css",
+          "icone": "arquivo",
+          "conteudo": "/* tokens del DESIGN.md + layout que sirve a los dos formatos (16:9 y 9:16) */\n:root { --fundo: #0c0c10; --superficie: #1c1c22; --linha: #3f3f47; --texto: #f4f4f5; --texto2: #a1a1aa; --destaque: #e9b949; }\n* { margin: 0; padding: 0; box-sizing: border-box; }\nhtml, body { overflow: hidden; background: var(--fundo); }\n#root { width: 100%; height: 100%; position: relative; font-family: ui-sans-serif, system-ui, sans-serif; }\n#luz { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 45%, var(--superficie) 0%, var(--fundo) 70%); }\n#bloco { position: absolute; left: 10%; right: 10%; top: 50%; transform: translateY(-50%); }\n#rotulo { color: var(--texto2); font-size: 40px; letter-spacing: 0.2em; text-transform: uppercase; line-height: 1.3; }\n#titulo { color: var(--texto); font-size: 150px; font-weight: 700; line-height: 1.1; margin-top: 36px; }\n#apoio { color: var(--texto2); font-size: 54px; line-height: 1.2; margin-top: 40px; }\n#trilho { position: absolute; left: 10%; right: 10%; bottom: 14%; height: 4px; background: var(--linha); transform-origin: left center; }\n#cabeca { position: absolute; left: 10%; bottom: calc(14% - 38px); width: 18px; height: 80px; background: var(--destaque); border-radius: 4px; }\n/* 9:16: la misma pieza, letra más grande en relación al ancho, todo apilado */\n.vertical #titulo { font-size: 132px; }\n.vertical #apoio { font-size: 56px; }\n.vertical #rotulo { font-size: 36px; }"
+        },
+        {
+          "rot": "Archivo · kit/exemplos/a8-abertura/abertura.js",
+          "icone": "arquivo",
+          "conteudo": "// La misma coreografía en los dos formatos: solo la distancia del cabezal de lectura depende del ancho.\nwindow.criaAbertura = function () {\n  const root = document.getElementById(\"root\");\n  const largura = Number(root.dataset.width);\n  const corrida = largura * 0.8 - 18; // del comienzo al final del riel (80% del ancho)\n  const tl = gsap.timeline({ paused: true });\n  tl.fromTo(\"#trilho\", { scaleX: 0 }, { scaleX: 1, duration: 1.2, ease: \"power2.inOut\" }, 0.4);\n  tl.fromTo(\"#cabeca\", { opacity: 0 }, { opacity: 1, duration: 0.3 }, 1.4);\n  tl.fromTo(\"#rotulo\", { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: \"power2.out\" }, 2.0);\n  tl.fromTo(\"#cabeca\", { x: 0 }, { x: corrida, duration: 9, ease: \"power1.inOut\" }, 2.0);\n  tl.fromTo(\"#titulo\", { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: \"power3.out\" }, 4.0);\n  tl.fromTo(\"#apoio\", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, ease: \"power2.out\" }, 7.5);\n  // de 11 s a 15 s el fotograma principal se sostiene (regla del DESIGN.md: el final se sostiene al menos 1,5 s)\n  return tl;\n};"
+        },
+        {
+          "rot": "Archivo · kit/exemplos/a8-abertura/index.html",
+          "icone": "arquivo",
+          "conteudo": "<!doctype html>\n<html lang=\"pt-BR\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=1920, height=1080\" />\n    <script src=\"https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js\"></script>\n    <link rel=\"stylesheet\" href=\"abertura.css\" />\n    <style>html, body { width: 1920px; height: 1080px; }</style>\n  </head>\n  <body>\n    <div id=\"root\" data-composition-id=\"main\" data-start=\"0\" data-duration=\"15\" data-width=\"1920\" data-height=\"1080\">\n      <div id=\"luz\"></div>\n      <div id=\"bloco\">\n        <p id=\"rotulo\">Formação Cinema com IA</p>\n        <h1 id=\"titulo\">Motion por&nbsp;código</h1>\n        <p id=\"apoio\">HyperFrames e Remotion, do terminal ao&nbsp;MP4</p>\n      </div>\n      <div id=\"trilho\"></div>\n      <div id=\"cabeca\"></div>\n    </div>\n    <script src=\"abertura.js\"></script>\n    <script>window.__timelines[\"main\"] = window.criaAbertura();</script>\n  </body>\n</html>"
+        },
+        {
+          "rot": "Terminal · marca, check, dos renders y verificar",
+          "icone": "play",
+          "conteudo": "K=~/projetos/formacao-cinema-ia-motion-v72/kit\nexport HYPERFRAMES_NO_TELEMETRY=1 NO_COLOR=1\nE=${TMPDIR:-/tmp}/ensaio-motion/a8; rm -rf \"$E\"; mkdir -p \"$E\"\ncp -r \"$K/exemplos/a8-abertura\" \"$E/abertura\"; cd \"$E/abertura\"\npython3 \"$K/conferir-design.py\" DESIGN.md abertura.css; echo \"saída: $?\"\nnpx -y hyperframes@0.8.176 check 2>&1 | grep -E \"Check passed|✗\"\nnpx -y hyperframes@0.8.176 render --quality draft --workers 2 --quiet --output renders/abertura-16x9.mp4 > render-16x9.log 2>&1\nnpx -y hyperframes@0.8.176 render -c formatos/vertical.html --quality draft --workers 2 --quiet --output renders/abertura-9x16.mp4 > render-9x16.log 2>&1\npython3 \"$K/conferir.py\" renders/abertura-16x9.mp4 15 1920x1080; echo \"saída: $?\"\npython3 \"$K/conferir.py\" renders/abertura-9x16.mp4 15 1080x1920; echo \"saída: $?\""
+        }
+      ],
+      "saida": {
+        "selo": "real",
+        "abas": [
+          {
+            "rot": "Salida capturada (19/10/2026)",
+            "html": "<pre>OK: 4 seções · 6 cores · 5 regras de movimento · a composição usa só cores do DESIGN.md\nsaída: 0\n◇  Check passed\nOK: 15,0 s · 1920×1080 · 30 fps · sem áudio\nsaída: 0\nOK: 15,0 s · 1080×1920 · 30 fps · sem áudio\nsaída: 0</pre><p>El render del 9:16 usa -c formatos/vertical.html. El vertical.html es el index.html con la raíz en 1080×1920, la clase vertical y las rutas ../abertura.css y ../abertura.js.</p>"
+          },
+          {
+            "rot": "Error capturado: --resolution portrait",
+            "html": "<pre>✗  Output resolution incompatible\n\n   outputResolution portrait (1080×1920) does not match the aspect ratio of the composition (1920×1080). The composition is landscape, so use --resolution landscape instead.</pre><p>La opción --resolution cambia la resolución dentro de la misma proporción (por ejemplo, 4K). Pasar de 16:9 a 9:16 es cambiar el encuadre: otra composición.</p>"
+          },
+          {
+            "rot": "Una palabra sola",
+            "html": "<p>En el primer render, el 9:16 partió el título en \"Motion por\" / \"código\": falla 2 de la clase 3. La corrección fue unir las dos últimas palabras con &amp;nbsp; en el HTML (\"por&amp;nbsp;código\"). Solo apareció mirando los fotogramas.</p>"
+          }
+        ]
+      }
+    },
+    {
+      "tipo": "codigo",
+      "titulo": "El error, aislado",
+      "sub": "Intentar sacar el 9:16 de la composición 16:9 con una opción de render.",
+      "blocos": [
+        {
+          "rot": "Terminal · render con --resolution portrait",
+          "icone": "x",
+          "conteudo": "export HYPERFRAMES_NO_TELEMETRY=1 NO_COLOR=1\ncd ${TMPDIR:-/tmp}/ensaio-motion/a8/abertura\nnpx -y hyperframes@0.8.176 render --resolution portrait --quality draft --output renders/torto.mp4 2>&1 | grep -A2 \"incompatible\""
+        }
+      ]
+    },
+    {
+      "tipo": "simfila",
+      "titulo": "La cola de renders",
+      "sub": "En una máquina común, el render va de a uno. Ejecuta, interrumpe y ejecuta de nuevo: solo lo que faltó vuelve a la cola.",
+      "tarefas": [
+        "check del 16:9",
+        "render del 16:9",
+        "check del 9:16",
+        "render del 9:16",
+        "verificar los dos MP4"
+      ],
+      "falha": 3,
+      "rot": {
+        "entrada": "fila/",
+        "rodando": "rodando/",
+        "feito": "pronto/",
+        "falhou": "falhou/",
+        "rodar": "Ejecutar la cola",
+        "parar": "Interrumpir (Ctrl+C)",
+        "zerar": "Reiniciar"
+      },
+      "msg": {
+        "inicio": "5 etapas en fila/. Haz clic en \"Ejecutar la cola\".",
+        "rodando": "Una etapa a la vez: el render pesa, y dos Chrome juntos se disputan la memoria.",
+        "parou": "Interrumpido. La etapa del medio quedó en rodando/. Ejecuta de nuevo para ver la reanudación.",
+        "retoma": "Reanudación: lo que estaba en rodando/ volvió a la cola. Lo que ya está en pronto/ no se rehace.",
+        "fim": "Cola vacía: los dos formatos renderizados y verificados.",
+        "fimfalha": "Cola vacía. El render del 9:16 fue a falhou/: solo ese se rehace, no el 16:9."
+      },
+      "legenda": "Simulación en el navegador: nada se renderiza de verdad. La falla es intencional, para mostrar que solo vuelve la etapa que falló."
+    },
+    {
+      "tipo": "pratica",
+      "titulo": "Práctica",
+      "sub": "El ensayo, el error y tu apertura.",
+      "exercicios": [
+        {
+          "id": "e1",
+          "titulo": "E1 · Dos formatos del ejemplo",
+          "min": "10 min",
+          "texto": "Ejecuta el bloque \"marca, check, dos renders y conferir\".",
+          "pronto": "<code>OK: 15,0 s · 1920×1080 · 30 fps · sem áudio</code> y <code>OK: 15,0 s · 1080×1920 · 30 fps · sem áudio</code>, cada uno con <code>saída: 0</code>."
+        },
+        {
+          "id": "e2",
+          "titulo": "E2 · El atajo que no existe",
+          "min": "5 min",
+          "texto": "Ejecuta el bloque del --resolution portrait.",
+          "pronto": "<code>✗  Output resolution incompatible</code> y la línea que termina en <code>use --resolution landscape instead.</code>"
+        },
+        {
+          "id": "e3",
+          "titulo": "E3 · Tu apertura",
+          "min": "60 min",
+          "texto": "En tu proyecto, con tu DESIGN.md: pídele al agente (RISE) la apertura de 15 s en index.html y formatos/vertical.html, revisa los fotogramas, renderiza los dos y ejecuta el verificador en los dos.",
+          "pronto": "<code>K=~/projetos/formacao-cinema-ia-motion-v72/kit; python3 $K/conferir.py renders/abertura-16x9.mp4 15 1920x1080; python3 $K/conferir.py renders/abertura-9x16.mp4 15 1080x1920; python3 $K/conferir-design.py DESIGN.md abertura.css; echo \"saída: $?\"</code> → dos líneas que empiezan con <code>OK: 15,0 s</code>, una con <code>OK: 4 seções</code> y <code>saída: 0</code>."
+        }
+      ]
+    },
+    {
+      "tipo": "gerador",
+      "titulo": "Genera tu plan con fechas",
+      "sub": "Elige la fecha de inicio y cuánto tiempo tienes por semana.",
+      "curso": "Motion por código con agente",
+      "horas_padrao": 4,
+      "degraus": [
+        {
+          "titulo": "Clase 1 · Video es código",
+          "aula": "codigo"
+        },
+        {
+          "titulo": "Clase 2 · HyperFrames desde cero",
+          "aula": "hyperframes"
+        },
+        {
+          "titulo": "Clase 3 · Pedirle al agente",
+          "aula": "rise"
+        },
+        {
+          "titulo": "Clase 4 · El DESIGN.md del video",
+          "aula": "marca"
+        },
+        {
+          "titulo": "Clase 5 · Remotion",
+          "aula": "remotion"
+        },
+        {
+          "titulo": "Clase 6 · Qué biblioteca",
+          "aula": "bibliotecas"
+        },
+        {
+          "titulo": "Clase 7 · Audio y subtítulos",
+          "aula": "audio"
+        },
+        {
+          "titulo": "Clase 8 · Tu apertura",
+          "aula": "abertura"
+        }
+      ],
+      "txt": {
+        "titulo": "Plan — Motion por código con agente",
+        "inicio": "Inicio",
+        "ritmo": "Ritmo",
+        "termino": "Fin previsto",
+        "ate": "hasta",
+        "pronto": "listo cuando",
+        "semanas": "semanas",
+        "travou": "## Lo que se trabó y la regla que creé",
+        "h": "h por semana",
+        "exs": "ejercicios"
+      }
+    },
+    {
+      "tipo": "quiz",
+      "titulo": "Prueba de la clase",
+      "sub": "La explicación aparece después de tu respuesta.",
+      "perguntas": [
+        {
+          "p": "¿Cómo sacar el 9:16 de la misma apertura?",
+          "opcoes": [
+            "render --resolution portrait en la composición 16:9.",
+            "Girar el MP4 16:9 en FFmpeg y ajustar la escala.",
+            "Otra composición 1080×1920 con el mismo CSS.",
+            "Recortar los laterales del 16:9 en un editor de video."
+          ],
+          "certa": 2,
+          "explica": "La 0.8.176 rechaza --resolution portrait en una composición horizontal. Girar o recortar pierde texto y encuadre. Otra composición con el mismo estilo es el camino que el render acepta.",
+          "ref": "codigo"
+        },
+        {
+          "p": "¿Por qué la coreografía lee el ancho de la raíz (data-width)?",
+          "opcoes": [
+            "Porque GSAP solo acepta distancias en píxeles absolutos.",
+            "Para que la cabeza recorra todo el riel en los dos formatos.",
+            "Porque el lint exige leer data-width en toda composición.",
+            "Para que el video vertical quede más corto que el horizontal."
+          ],
+          "certa": 1,
+          "explica": "El riel ocupa el 80% del ancho; la distancia cambia entre 1920 y 1080 px. Leer la medida de la raíz permite que una sola coreografía sirva a los dos.",
+          "ref": "codigo"
+        },
+        {
+          "p": "El render del 9:16 falló después de que el 16:9 quedó listo. ¿Qué se rehace?",
+          "opcoes": [
+            "Solo el render del 9:16, y verificar.",
+            "Todo, desde el check del 16:9.",
+            "Los dos renders juntos, para ganar tiempo.",
+            "Nada: entrega solo el 16:9."
+          ],
+          "certa": 0,
+          "explica": "Lo que ya está listo y verificado no se rehace. Y renderizar los dos juntos en una máquina cargada es como el segundo falla por memoria.",
+          "ref": "simfila"
+        }
+      ]
+    },
+    {
+      "tipo": "resumo",
+      "titulo": "En tres frases",
+      "itens": [
+        {
+          "t": "Dos formatos",
+          "texto": "Dos composiciones, un estilo: CSS y coreografía compartidos."
+        },
+        {
+          "t": "Entrega",
+          "texto": "DESIGN.md verificado, check pasando y el verificador en los dos MP4."
+        },
+        {
+          "t": "Cola",
+          "texto": "Un render a la vez; rehaz solo lo que falló."
+        }
+      ]
+    },
+    {
+      "tipo": "links",
+      "titulo": "Próximo paso",
+      "links": [
+        {
+          "t": "Curso 4 de la formación: la fábrica de video con agentes",
+          "href": "https://inematds.github.io/formacao-cinema-ia-fabrica-v72/es/",
+          "icone": "seta"
+        },
+        {
+          "t": "Curso 5: sitios cinematográficos (el video se vuelve página)",
+          "href": "https://inematds.github.io/formacao-cinema-ia-sites-v72/es/",
+          "icone": "camadas"
+        },
+        {
+          "t": "El kit de este curso en GitHub",
+          "href": "https://github.com/inematds/formacao-cinema-ia-motion-v72/tree/main/kit",
+          "icone": "git"
+        }
+      ]
+    }
+  ]
+}

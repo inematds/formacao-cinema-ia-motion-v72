@@ -1,0 +1,262 @@
+{
+  "slug": "marca",
+  "num": 4,
+  "menu": "Marca",
+  "titulo": "Sistema de marca y filosofía de movimiento: el DESIGN.md de tu video",
+  "titulo_curto": "El DESIGN.md del video",
+  "minutos": 15,
+  "lead": "Sin una regla escrita, cada pedido al agente trae un color nuevo y un movimiento distinto, y las piezas no parecen de la misma marca. El DESIGN.md es el archivo que el agente lee antes de componer: colores, fuentes, cómo se mueven las cosas y qué está prohibido. En esta clase escribes el tuyo y reprueba el color fuera de la marca con un comando.",
+  "objetivo": "escribir el DESIGN.md de tu video y comprobar que la composición usa solo los colores y las reglas de él.",
+  "competencias": [
+    "escribir-design-md",
+    "traduzir-marca-em-tokens",
+    "reprovar-cor-fora-da-marca"
+  ],
+  "aprende": [
+    {
+      "icone": "arquivo",
+      "t": "Las cuatro secciones: Cores, Tipografia, Movimento y Proibido"
+    },
+    {
+      "icone": "marca",
+      "t": "Tokens: el color nace en el DESIGN.md y se vuelve variable CSS"
+    },
+    {
+      "icone": "relogio",
+      "t": "La filosofía de movimiento escrita como regla con número"
+    },
+    {
+      "icone": "portao",
+      "t": "El verificador que atrapa el color que el agente inventó"
+    }
+  ],
+  "hero_alt": "Tarjetas de muestra de color (negro, gris, blanco y un amarillo) y un tipómetro de metal sobre una mesa oscura.",
+  "secoes": [
+    {
+      "tipo": "diagrama",
+      "titulo": "Del DESIGN.md a la composición",
+      "sub": "Haz clic en cada sección del archivo.",
+      "nos": [
+        {
+          "icone": "marca",
+          "titulo": "Cores",
+          "sub": "hex",
+          "detalhe": "Pocos colores, cada uno con una función: fondo, superficie, línea, texto, texto secundario y un acento usado solo en detalles. En hex, para que el verificador los lea."
+        },
+        {
+          "icone": "caneta",
+          "titulo": "Tipografia",
+          "sub": "fuente y medida",
+          "detalhe": "Familia, peso, tamaño en 1920×1080, altura de línea y el límite de palabras por título."
+        },
+        {
+          "icone": "relogio",
+          "titulo": "Movimiento",
+          "sub": "reglas",
+          "detalhe": "Duraciones, curvas (power2.out, power3.out), orden (una cosa a la vez), cuánto tiempo el texto queda quieto y cuánto se sostiene el fotograma final. Regla con número, no adjetivo."
+        },
+        {
+          "icone": "x",
+          "titulo": "Proibido",
+          "sub": "límites",
+          "detalhe": "Lo que el agente no puede hacer: color fuera de la lista, neón, logo dibujado de memoria, Math.random."
+        },
+        {
+          "icone": "arquivo",
+          "titulo": "Composición",
+          "sub": "usa tokens",
+          "forte": true,
+          "detalhe": "Los colores entran como variables CSS (:root { --fundo: #0c0c10; … }) y el resto del archivo solo usa var(--fundo). Cambiar la marca se vuelve cambiar seis líneas."
+        }
+      ],
+      "legenda": "Principios que valen para cualquier marca: una idea a la vez, luz en lugar de mucho color, el fotograma principal se sostiene antes de salir."
+    },
+    {
+      "tipo": "codigo",
+      "titulo": "Un DESIGN.md de ejemplo y la composición que lo obedece",
+      "sub": "El ejemplo usa la paleta oscura de INEMA. Cámbiala por los colores de tu marca, manteniendo las cuatro secciones.",
+      "blocos": [
+        {
+          "rot": "Archivo · kit/exemplos/a4-marca/DESIGN.md",
+          "icone": "arquivo",
+          "conteudo": "# DESIGN.md — vídeo de exemplo (curso Motion por código, INEMA.CLUB)\n\nUna frase: fondo oscuro y calmo, una idea a la vez, luz en lugar de color; el amarillo solo aparece en detalles.\n\n## Cores\n- fundo: #0c0c10\n- superfície: #1c1c22\n- linha: #3f3f47\n- texto: #f4f4f5\n- texto secundário: #a1a1aa\n- destaque (solo detalle: un filete, un punto, el cabezal de lectura): #e9b949\n\n## Tipografia\n- Títulos: sans serif del sistema, peso 700, altura de línea 1,1, máximo 6 palabras.\n- Apoyo: sans serif del sistema, peso 400, 48 px en 1920x1080.\n- Ninguna palabra sola en la última línea.\n\n## Movimento\n- Entrada de 0,5 a 0,8 s con power2.out o power3.out; salida más corta que la entrada, con power2.in.\n- Una cosa se mueve a la vez; la siguiente empieza cuando la anterior ya se asentó.\n- Todo texto queda al menos 1,2 s quieto y legible.\n- Nada a velocidad constante (ease \"none\" solo en barra de progreso).\n- El fotograma principal (título o marca) se sostiene al menos 1,5 s al final.\n\n## Proibido\n- Color que no está en \"Cores\", neón, brillo fuerte, degradado de colores.\n- Logo dibujado de memoria: logo solo del archivo de la marca.\n- Math.random y Date.now en la composición."
+        },
+        {
+          "rot": "Archivo · kit/exemplos/a4-marca/index.html",
+          "icone": "arquivo",
+          "conteudo": "<!doctype html>\n<html lang=\"pt-BR\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=1920, height=1080\" />\n    <script src=\"https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js\"></script>\n    <style>\n      /* tokens copiados del DESIGN.md: la composición solo usa estos colores */\n      :root { --fundo: #0c0c10; --superficie: #1c1c22; --linha: #3f3f47; --texto: #f4f4f5; --texto2: #a1a1aa; --destaque: #e9b949; }\n      * { margin: 0; padding: 0; box-sizing: border-box; }\n      html, body { width: 1920px; height: 1080px; overflow: hidden; background: var(--fundo); }\n      #root { width: 100%; height: 100%; position: relative; font-family: ui-sans-serif, system-ui, sans-serif; }\n      #luz { position: absolute; inset: 0; background: radial-gradient(ellipse at 30% 45%, var(--superficie) 0%, var(--fundo) 65%); }\n      #bloco { position: absolute; left: 220px; top: 340px; }\n      #rotulo { color: var(--texto2); font-size: 40px; letter-spacing: 0.2em; text-transform: uppercase; }\n      #filete { width: 120px; height: 6px; margin: 28px 0 32px; background: var(--destaque); transform-origin: left center; }\n      #titulo { color: var(--texto); font-size: 128px; font-weight: 700; line-height: 1.1; }\n      #base { position: absolute; left: 220px; right: 220px; top: 900px; height: 2px; background: var(--linha); transform-origin: left center; }\n    </style>\n  </head>\n  <body>\n    <div id=\"root\" data-composition-id=\"main\" data-start=\"0\" data-duration=\"5\" data-width=\"1920\" data-height=\"1080\">\n      <div id=\"luz\"></div>\n      <div id=\"bloco\">\n        <p id=\"rotulo\">Capítulo 2</p>\n        <div id=\"filete\"></div>\n        <h1 id=\"titulo\">A luz decide o tom</h1>\n      </div>\n      <div id=\"base\"></div>\n    </div>\n    <script>\n      // reglas del DESIGN.md: una cosa a la vez, entrada 0,5–0,8 s con power2/3.out, el título se sostiene hasta el final\n      const tl = gsap.timeline({ paused: true });\n      tl.fromTo(\"#base\", { scaleX: 0 }, { scaleX: 1, duration: 0.8, ease: \"power2.out\" }, 0.2);\n      tl.fromTo(\"#rotulo\", { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: \"power2.out\" }, 0.8);\n      tl.fromTo(\"#filete\", { scaleX: 0 }, { scaleX: 1, duration: 0.5, ease: \"power3.out\" }, 1.2);\n      tl.fromTo(\"#titulo\", { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: \"power3.out\" }, 1.6);\n      window.__timelines[\"main\"] = tl;\n    </script>\n  </body>\n</html>"
+        }
+      ]
+    },
+    {
+      "tipo": "codigo",
+      "titulo": "Verificar la marca con un comando",
+      "sub": "El conferir-design.py lee las cuatro secciones y busca, en la composición, todo color en hex que no esté en Cores.",
+      "blocos": [
+        {
+          "rot": "Terminal · verificar el DESIGN.md y el check",
+          "icone": "check",
+          "conteudo": "K=~/projetos/formacao-cinema-ia-motion-v72/kit\nexport HYPERFRAMES_NO_TELEMETRY=1 NO_COLOR=1\nE=${TMPDIR:-/tmp}/ensaio-motion/a4; rm -rf \"$E\"; mkdir -p \"$E\"\ncp -r \"$K/exemplos/a4-marca\" \"$E/marca\"; cd \"$E/marca\"\npython3 \"$K/conferir-design.py\" DESIGN.md index.html; echo \"saída: $?\"\nnpx -y hyperframes@0.8.176 check 2>&1 | grep -E \"Check passed|✗|WCAG\""
+        },
+        {
+          "rot": "Terminal · el error: el agente \"mejoró\" el destaque",
+          "icone": "x",
+          "conteudo": "K=~/projetos/formacao-cinema-ia-motion-v72/kit\ncd ${TMPDIR:-/tmp}/ensaio-motion/a4/marca\nsed -i 's/--destaque: #e9b949/--destaque: #ff3366/' index.html   # o agente \"melhorou\" o destaque\npython3 \"$K/conferir-design.py\" DESIGN.md index.html; echo \"saída: $?\""
+        }
+      ],
+      "saida": {
+        "selo": "real",
+        "abas": [
+          {
+            "rot": "Salida capturada (19/10/2026)",
+            "html": "<pre>OK: 4 seções · 6 cores · 5 regras de movimento · a composição usa só cores do DESIGN.md\nsaída: 0\n  ◇ 7/7 text checks pass WCAG AA\n◇  Check passed</pre><p>El check de HyperFrames verifica el contraste (WCAG AA); el verificador del kit verifica la marca. Son compuertas distintas.</p>"
+          },
+          {
+            "rot": "Error capturado: color fuera de la marca",
+            "html": "<pre>FORA DA MARCA: #ff3366 (linha 9)\nsaída: 1</pre><p>Basta una línea para que el rosa entre en el video. El verificador dice qué color y en qué línea, y sale con código 1 para frenar el render en un script.</p>"
+          }
+        ]
+      }
+    },
+    {
+      "tipo": "passos",
+      "titulo": "Cómo usa el agente el archivo",
+      "sub": "Tres hábitos que hacen que el DESIGN.md valga.",
+      "passos": [
+        {
+          "titulo": "Citar en la R",
+          "sub": "cada pedido",
+          "texto": [
+            "El pedido RISE empieza con \"lee el DESIGN.md de esta carpeta\" (clase 3).",
+            "Sin eso, el agente lo lee solo si se acuerda."
+          ]
+        },
+        {
+          "titulo": "Ponerlo en la compuerta",
+          "sub": "antes del render",
+          "texto": [
+            "Ejecuta conferir-design.py junto con el check, en un solo script.",
+            "Código 1 en cualquiera de los dos y todo se detiene."
+          ],
+          "exemplo": {
+            "rot": "Compuerta",
+            "texto": "python3 conferir-design.py DESIGN.md index.html && npx hyperframes@0.8.176 check"
+          }
+        },
+        {
+          "titulo": "Cambiar en el archivo",
+          "sub": "nunca en la pieza",
+          "texto": [
+            "¿No te gustó el amarillo? Cámbialo en el DESIGN.md y pídele al agente que lo aplique.",
+            "Un cambio hecho directo en una pieza desaparece en la siguiente."
+          ]
+        }
+      ]
+    },
+    {
+      "tipo": "pratica",
+      "titulo": "Práctica",
+      "sub": "El ensayo, el error y el DESIGN.md de tu marca.",
+      "exercicios": [
+        {
+          "id": "e1",
+          "titulo": "E1 · Marca verificada",
+          "min": "5 min",
+          "texto": "Ejecuta el bloque \"verificar el DESIGN.md y el check\".",
+          "pronto": "<code>OK: 4 seções · 6 cores · 5 regras de movimento · a composição usa só cores do DESIGN.md</code>, <code>saída: 0</code> y <code>◇  Check passed</code>."
+        },
+        {
+          "id": "e2",
+          "titulo": "E2 · Color fuera de la marca",
+          "min": "5 min",
+          "texto": "Ejecuta el bloque del error.",
+          "pronto": "<code>FORA DA MARCA: #ff3366 (linha 9)</code> y <code>saída: 1</code>."
+        },
+        {
+          "id": "e3",
+          "titulo": "E3 · El DESIGN.md de tu marca",
+          "min": "20 min",
+          "texto": "Copia el ejemplo a tu proyecto de la clase 2, cambia los colores y las reglas por los de tu marca, y cambia los colores del :root del index.html por los mismos.",
+          "pronto": "<code>python3 ~/projetos/formacao-cinema-ia-motion-v72/kit/conferir-design.py DESIGN.md index.html; echo \"saída: $?\"</code> → empieza con <code>OK: 4 seções</code> y <code>saída: 0</code>."
+        }
+      ]
+    },
+    {
+      "tipo": "quiz",
+      "titulo": "Prueba de la clase",
+      "sub": "La explicación aparece después de tu respuesta.",
+      "perguntas": [
+        {
+          "p": "¿Qué regla de movimiento puede seguir el agente sin adivinar?",
+          "opcoes": [
+            "\"Movimiento elegante, premium y moderno.\"",
+            "\"Entrada de 0,5 a 0,8 s con power3.out.\"",
+            "\"Animaciones modernas como las de las grandes marcas.\"",
+            "\"Rápido, con energía, pero sin ningún exceso.\""
+          ],
+          "certa": 1,
+          "explica": "Un número y un nombre de curva se vuelven código directo. Un adjetivo se vuelve una suposición, y la suposición cambia en cada pedido.",
+          "ref": "diagrama"
+        },
+        {
+          "p": "¿Por qué los colores entran como variables CSS?",
+          "opcoes": [
+            "Porque HyperFrames no acepta hex en medio del CSS.",
+            "Porque una variable CSS hace el render mucho más rápido.",
+            "Porque el lint de HyperFrames exige un bloque :root.",
+            "Porque cambiar la marca se vuelve cambiar una línea por color."
+          ],
+          "certa": 3,
+          "explica": "Un hex suelto esparcido es como el agente mezcla colores. Con tokens, el color cambia en un solo lugar y toda la pieza lo acompaña.",
+          "ref": "codigo"
+        },
+        {
+          "p": "El check pasó y conferir-design.py reprobó. ¿Qué vale?",
+          "opcoes": [
+            "La reprobación: son compuertas que verifican cosas distintas.",
+            "El check, porque es la compuerta oficial de HyperFrames.",
+            "Ninguno de los dos: vuelve a hacer el render y mira el resultado.",
+            "El verificador, pero solo cuando el proyecto es Remotion."
+          ],
+          "certa": 0,
+          "explica": "El check mira errores, layout, movimiento y contraste; no sabe cuál es tu marca. El verificador solo sabe de la marca. Una buena compuerta tiene los dos.",
+          "ref": "codigo"
+        }
+      ]
+    },
+    {
+      "tipo": "resumo",
+      "titulo": "En tres frases",
+      "itens": [
+        {
+          "t": "Cuatro secciones",
+          "texto": "Colores, Tipografía, Movimiento y Prohibido, con número y no con adjetivo."
+        },
+        {
+          "t": "Tokens",
+          "texto": "El color nace en DESIGN.md y entra como variable CSS en la composición."
+        },
+        {
+          "t": "Compuerta de la marca",
+          "texto": "conferir-design.py junto con el check, antes de cada render."
+        }
+      ]
+    },
+    {
+      "tipo": "links",
+      "titulo": "Para ir más allá",
+      "links": [
+        {
+          "t": "Curso 0 de la formación: luz, color y atmósfera decididos antes del prompt",
+          "href": "https://inematds.github.io/formacao-cinema-ia-direcao-v72/es/",
+          "icone": "video"
+        },
+        {
+          "t": "INEMA Motion Lab: piezas con el mismo lenguaje visual",
+          "href": "https://inematds.github.io/inema-motion-lab/guia/",
+          "icone": "camadas"
+        }
+      ]
+    }
+  ]
+}

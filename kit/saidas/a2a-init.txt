@@ -1,0 +1,10 @@
+saída: 0
+AGENTS.md
+CLAUDE.md
+hyperframes.json
+index.html
+meta.json
+package.json
+    "render": "npx --yes hyperframes@0.8.176 render",
+
+  Status:     disabled

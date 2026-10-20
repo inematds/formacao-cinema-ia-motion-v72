@@ -1,0 +1,7 @@
+OK: 4 seções · 6 cores · 5 regras de movimento · a composição usa só cores do DESIGN.md
+saída: 0
+◇  Check passed
+OK: 15,0 s · 1920×1080 · 30 fps · sem áudio
+saída: 0
+OK: 15,0 s · 1080×1920 · 30 fps · sem áudio
+saída: 0

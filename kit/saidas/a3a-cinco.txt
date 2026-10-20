@@ -1,0 +1,4 @@
+◇  Check passed
+5 quadros em quadros/
+COSTURA: igual (quadro inicial = quadro final)
+saída: 0

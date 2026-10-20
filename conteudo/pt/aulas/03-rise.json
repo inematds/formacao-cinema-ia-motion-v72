@@ -1,0 +1,280 @@
+{
+  "slug": "rise",
+  "num": 3,
+  "menu": "RISE",
+  "titulo": "Pedir ao agente: o método RISE e o teste em cinco quadros",
+  "titulo_curto": "Pedir ao agente",
+  "minutos": 15,
+  "lead": "Pedido vago gera animação genérica e dez rodadas de correção. O RISE organiza o pedido em quatro partes: Referências, Ideia, Estilo e Examinar. A última é a que mais salva: o agente confere cinco quadros e corrige antes de você renderizar. Nesta aula você escreve o pedido e confere a resposta com um comando.",
+  "objetivo": "escrever um pedido RISE para o seu agente e conferir o resultado em cinco quadros antes de renderizar.",
+  "competencias": [
+    "escrever-pedido-rise",
+    "conferir-em-cinco-quadros",
+    "pedir-correcao-especifica"
+  ],
+  "aprende": [
+    {
+      "icone": "arquivo",
+      "t": "As quatro partes do pedido e o que vai em cada uma"
+    },
+    {
+      "icone": "lupa",
+      "t": "O snapshot: cinco quadros em segundos, sem renderizar o vídeo"
+    },
+    {
+      "icone": "check",
+      "t": "A costura do loop conferida por pixel"
+    },
+    {
+      "icone": "lista",
+      "t": "As 10 falhas de uma animação amadora, para olhar nos quadros"
+    }
+  ],
+  "hero_alt": "Folha com cinco miniaturas de quadros desenhadas a lápis, uma lupa e um lápis sobre a mesa de edição.",
+  "secoes": [
+    {
+      "tipo": "diagrama",
+      "titulo": "As quatro partes do pedido",
+      "sub": "Clique em cada letra.",
+      "estilo": "escada",
+      "nos": [
+        {
+          "icone": "pasta",
+          "titulo": "Referências",
+          "sub": "R",
+          "detalhe": "O que é verdade e não se inventa: o DESIGN.md (aula 4), o logo em arquivo, a pasta do projeto, a versão do HyperFrames. \"Use exatamente esses\"."
+        },
+        {
+          "icone": "caneta",
+          "titulo": "Ideia",
+          "sub": "I",
+          "detalhe": "Uma imagem com início, meio e fim, em segundos. Uma mudança principal. Em loop, o último quadro é igual ao primeiro."
+        },
+        {
+          "icone": "marca",
+          "titulo": "Estilo",
+          "sub": "S",
+          "detalhe": "Aparência E movimento: cores em hex, fonte, peso; curvas de entrada e saída, o que se move primeiro, quanto tempo o texto fica parado."
+        },
+        {
+          "icone": "lupa",
+          "titulo": "Examinar",
+          "sub": "E",
+          "forte": true,
+          "detalhe": "Como o agente prova que terminou: check passando, cinco quadros tirados com snapshot, as checagens de cada quadro e \"corrija e repita até passar\". E \"não renderize\": o render é seu."
+        }
+      ],
+      "volta": "falhou um quadro → corrigir e examinar de novo",
+      "legenda": "Método RISE do curso motion-rise do INEMA, adaptado ao HyperFrames: o E usa check e snapshot em vez de um canvas próprio."
+    },
+    {
+      "tipo": "codigo",
+      "titulo": "O pedido pronto",
+      "sub": "Um loop de 6 s sobre uma linha do tempo de edição. Copie para a pasta do projeto e cole no agente (Claude Code ou Codex, com o modelo topo da sua assinatura).",
+      "blocos": [
+        {
+          "rot": "Arquivo · kit/prompts/rise-loop.md",
+          "icone": "arquivo",
+          "conteudo": "R — REFERÊNCIAS\nLeia o DESIGN.md desta pasta antes de tudo: cores, fontes e regras de movimento saem dele. Não invente logotipo, cor nem fonte.\nProjeto HyperFrames 0.8.176 nesta pasta (index.html já criado pelo init).\n\nI — IDEIA\nUm loop de 6 segundos, 1920x1080, sobre uma linha do tempo de edição.\n- Início (0–0,6 s): o trilho da linha do tempo e a cabeça de leitura parados à esquerda.\n- Meio (0,6–4,2 s): a cabeça de leitura corre até a direita; o título \"Cena 1\" entra e sai.\n- Fim (4,2–6 s): a cabeça volta à esquerda e para. O último quadro é igual ao primeiro.\n\nS — ESTILO\nVisual: fundo #0c0c10 com luz suave no centro, trilho #3f3f47, cabeça de leitura #e9b949 (a única cor de destaque), título branco #f4f4f5 em sem serifa do sistema, peso 700.\nMovimento: nada em velocidade constante (power1 a power3, entrada e saída suaves); o título fica pelo menos 1,2 s legível; uma coisa se move por vez.\n\nE — EXAMINAR\nEscreva tudo numa única timeline GSAP pausada registrada em window.__timelines[\"main\"], sem Math.random e sem Date.now.\nRode `npx hyperframes@0.8.176 check` e corrija até aparecer \"Check passed\".\nTire 5 quadros com `npx hyperframes@0.8.176 snapshot --at 0,1.5,3,4.5,5.9 --no-end -o quadros`, olhe o contact-sheet.jpg e confira:\no quadro de 0 s é igual ao de 5,9 s; nenhuma letra cortada; nenhuma palavra sozinha na linha; o título aparece inteiro no quadro de 3 s.\nCorrija o que falhar e repita até tudo passar. Não renderize o MP4: eu renderizo depois de ver os quadros."
+        },
+        {
+          "rot": "No agente · dentro da pasta do projeto",
+          "icone": "robo",
+          "conteudo": "Leia rise-loop.md e faça exatamente o que ele pede. No fim, me diga o resultado do check e o que você corrigiu depois de olhar os 5 quadros."
+        }
+      ]
+    },
+    {
+      "tipo": "codigo",
+      "titulo": "O E na sua mão: cinco quadros e a costura",
+      "sub": "A pasta kit/exemplos/a3-loop tem uma composição feita a partir deste pedido. O ensaio roda o check, tira cinco quadros e compara o primeiro com o último.",
+      "blocos": [
+        {
+          "rot": "Terminal · check, cinco quadros e costura",
+          "icone": "lupa",
+          "conteudo": "K=~/projetos/formacao-cinema-ia-motion-v72/kit\nexport HYPERFRAMES_NO_TELEMETRY=1 NO_COLOR=1\nunset GEMINI_API_KEY   # sem isso, o snapshot manda os quadros ao Gemini sozinho\nE=${TMPDIR:-/tmp}/ensaio-motion/a3; rm -rf \"$E\"; mkdir -p \"$E\"\ncp -r \"$K/exemplos/a3-loop\" \"$E/loop\"; cd \"$E/loop\"\nnpx -y hyperframes@0.8.176 check 2>&1 | grep -E \"Check passed|✗\"\nnpx -y hyperframes@0.8.176 snapshot --at 0,1.5,3,4.5,5.9 --no-end -o quadros > snapshot.log 2>&1\nbash \"$K/costura.sh\" quadros; echo \"saída: $?\""
+        },
+        {
+          "rot": "Terminal · o erro: tirar a volta da cabeça de leitura",
+          "icone": "x",
+          "conteudo": "K=~/projetos/formacao-cinema-ia-motion-v72/kit\nexport HYPERFRAMES_NO_TELEMETRY=1 NO_COLOR=1\nunset GEMINI_API_KEY\ncd ${TMPDIR:-/tmp}/ensaio-motion/a3/loop\nsed -i '/x: 0, duration: 1.2/d' index.html   # tira a volta da cabeça de leitura\nnpx -y hyperframes@0.8.176 snapshot --at 0,1.5,3,4.5,5.9 --no-end -o quadros > snapshot.log 2>&1\nbash \"$K/costura.sh\" quadros; echo \"saída: $?\""
+        }
+      ],
+      "saida": {
+        "selo": "real",
+        "abas": [
+          {
+            "rot": "Saída capturada (19/10/2026)",
+            "html": "<pre>◇  Check passed\n5 quadros em quadros/\nCOSTURA: igual (quadro inicial = quadro final)\nsaída: 0</pre><p>Os quadros ficam em quadros/ (frame-00-at-0s.png até frame-04-at-5.9s.png) com um contact-sheet.jpg, a grade que você e o agente olham.</p>"
+          },
+          {
+            "rot": "Erro capturado: sem a volta",
+            "html": "<pre>5 quadros em quadros/\nCOSTURA: diferente — o último quadro não volta ao primeiro\nsaída: 1</pre><p>Sem o último movimento, a cabeça termina à direita e o loop pula. O comando pega a falha antes de qualquer render.</p>"
+          },
+          {
+            "rot": "Cuidado: snapshot e Gemini",
+            "html": "<p>No 0.8.176, o <code>snapshot</code> tem a opção <code>--describe</code>, que manda os quadros para análise do Gemini e roda sozinha quando existe <code>GEMINI_API_KEY</code> no ambiente (texto do <code>snapshot --help</code>). Os blocos fazem <code>unset GEMINI_API_KEY</code> para nada sair da máquina.</p>"
+          }
+        ]
+      }
+    },
+    {
+      "tipo": "passos",
+      "titulo": "O que olhar nos cinco quadros",
+      "sub": "As 10 falhas do motion-rise, em quatro grupos. Cole a lista no fim do pedido ou confira você mesmo no contact-sheet.",
+      "passos": [
+        {
+          "titulo": "Texto",
+          "sub": "falhas 1, 2, 7",
+          "texto": [
+            "Letra cortada (altura de linha 1,1 ou mais; confira g, j, p, q, y).",
+            "Palavra sozinha na última linha: reescreva ou amarre as duas últimas palavras com espaço que não quebra.",
+            "Todo texto parado pelo menos 1,2 s."
+          ]
+        },
+        {
+          "titulo": "Palco",
+          "sub": "falhas 3, 4, 9",
+          "texto": [
+            "O visual ocupa de 80% a 95% do quadro.",
+            "A luz cai ao longo do quadro: nada de cor chapada.",
+            "Uma ideia sobre um fundo calmo."
+          ]
+        },
+        {
+          "titulo": "Movimento",
+          "sub": "falhas 5, 6",
+          "texto": [
+            "Nada em velocidade constante: entrada e saída suaves.",
+            "Em loop, o último quadro igual ao primeiro (o costura.sh confere)."
+          ]
+        },
+        {
+          "titulo": "Marca",
+          "sub": "falhas 8, 10",
+          "texto": [
+            "Logo só do arquivo, nunca desenhado de memória.",
+            "Textura sutil para não parecer plástico."
+          ]
+        }
+      ]
+    },
+    {
+      "tipo": "pratica",
+      "titulo": "Prática",
+      "sub": "O ensaio, o erro e o seu agente.",
+      "exercicios": [
+        {
+          "id": "e1",
+          "titulo": "E1 · Cinco quadros e costura",
+          "min": "5 min",
+          "texto": "Rode o bloco \"check, cinco quadros e costura\" e abra quadros/contact-sheet.jpg.",
+          "pronto": "<code>◇  Check passed</code>, <code>5 quadros em quadros/</code>, <code>COSTURA: igual (quadro inicial = quadro final)</code> e <code>saída: 0</code>."
+        },
+        {
+          "id": "e2",
+          "titulo": "E2 · Ver a costura abrir",
+          "min": "5 min",
+          "texto": "Rode o bloco do erro, que apaga a volta da cabeça de leitura.",
+          "pronto": "<code>COSTURA: diferente — o último quadro não volta ao primeiro</code> e <code>saída: 1</code>."
+        },
+        {
+          "id": "e3",
+          "titulo": "E3 · O seu agente faz o loop",
+          "min": "20 min",
+          "texto": "Num projeto novo (npx hyperframes@0.8.176 init meu-loop --non-interactive), copie kit/prompts/rise-loop.md e kit/exemplos/a4-marca/DESIGN.md para a pasta e mande o pedido ao seu agente. (o DESIGN.md vem pronto; a aula 4 explica cada seção). Depois rode você mesmo o check e o snapshot do bloco.",
+          "pronto": "Na pasta meu-loop: <code>npx hyperframes@0.8.176 check</code> termina em <code>Check passed</code> e <code>bash ~/projetos/formacao-cinema-ia-motion-v72/kit/costura.sh quadros; echo \"saída: $?\"</code> → <code>COSTURA: igual</code> e <code>saída: 0</code>."
+        }
+      ]
+    },
+    {
+      "tipo": "quiz",
+      "titulo": "Teste da aula",
+      "sub": "A explicação aparece depois da sua resposta.",
+      "perguntas": [
+        {
+          "p": "Qual parte do RISE diz ao agente como provar que terminou?",
+          "opcoes": [
+            "Referências",
+            "Ideia",
+            "Estilo",
+            "Examinar"
+          ],
+          "certa": 3,
+          "explica": "O E traz o portão (check), os quadros a tirar, o que conferir em cada um e a ordem de corrigir e repetir. Sem ele, o agente declara pronto no primeiro arquivo que roda.",
+          "ref": "diagrama"
+        },
+        {
+          "p": "Por que o pedido termina com \"não renderize o MP4\"?",
+          "opcoes": [
+            "Porque o agente não sabe rodar o comando de render.",
+            "Porque render é o passo caro: vem depois dos quadros.",
+            "Porque o snapshot já gera o MP4 completo junto.",
+            "Porque render feito pelo agente gasta crédito de vídeo."
+          ],
+          "certa": 1,
+          "explica": "Cinco quadros saem em segundos; o render inteiro leva minutos e ocupa a máquina. Olhar antes evita renderizar errado. Render local não gasta crédito de plataforma nenhuma.",
+          "ref": "codigo"
+        },
+        {
+          "p": "O costura.sh disse \"diferente\". O que pedir ao agente?",
+          "opcoes": [
+            "Que o último quadro volte ao primeiro, e conferir de novo.",
+            "Que aumente a duração do vídeo para caber o movimento.",
+            "Que renderize logo em qualidade delivery para ver melhor.",
+            "Que troque o GSAP por animação CSS, que é mais simples."
+          ],
+          "certa": 0,
+          "explica": "Correção específica, com o critério junto: o que precisa mudar e como ele confere. \"Melhora o loop\" gera outra rodada no escuro.",
+          "ref": "pratica"
+        },
+        {
+          "p": "Onde entram as cores e a fonte no pedido?",
+          "opcoes": [
+            "Na Ideia, junto da descrição do início e do fim.",
+            "No Examinar, como uma das checagens dos quadros.",
+            "No Estilo, vindas do DESIGN.md citado em R.",
+            "Em lugar nenhum: o agente escolhe o que combina."
+          ],
+          "certa": 2,
+          "explica": "O Estilo descreve aparência e movimento; o R aponta o arquivo que manda (o DESIGN.md da aula 4). Assim o agente não inventa cor.",
+          "ref": "diagrama"
+        }
+      ]
+    },
+    {
+      "tipo": "resumo",
+      "titulo": "Em três frases",
+      "itens": [
+        {
+          "t": "RISE",
+          "texto": "Referências, Ideia, Estilo e Examinar, nessa ordem, num arquivo que fica na pasta."
+        },
+        {
+          "t": "Cinco quadros",
+          "texto": "O snapshot mostra o vídeo em segundos; o costura.sh confere o loop por pixel."
+        },
+        {
+          "t": "Correção específica",
+          "texto": "O que mudar e como conferir, nunca \"melhora\"."
+        }
+      ]
+    },
+    {
+      "tipo": "links",
+      "titulo": "Para ir além",
+      "links": [
+        {
+          "t": "Motion em código: o método RISE (curso INEMA)",
+          "href": "https://inematds.github.io/motion-rise/",
+          "icone": "arquivo"
+        },
+        {
+          "t": "HyperFrames: repositório oficial",
+          "href": "https://github.com/heygen-com/hyperframes",
+          "icone": "git"
+        }
+      ]
+    }
+  ]
+}

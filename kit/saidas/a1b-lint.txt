@@ -1,0 +1,11 @@
+◆  Linting a1-sorteio/index.html
+
+  ✗ [~/projetos/formacao-cinema-ia-motion-v72/kit/exemplos/a1-sorteio/index.html:24:24] non_deterministic_code: Script contains `Math.random()` which produces non-deterministic output. Renders may differ between frames or runs.
+    Fix: Use a seeded PRNG (e.g. a simple mulberry32) so renders are deterministic across frames.
+
+◇  1 error(s), 0 warning(s)
+saída: 1
+◆  Linting a1-semente/index.html
+
+◇  0 errors, 0 warnings
+saída: 0

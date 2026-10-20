@@ -1,0 +1,3 @@
+✗  Output resolution incompatible
+
+   outputResolution portrait (1080×1920) does not match the aspect ratio of the composition (1920×1080). The composition is landscape, so use --resolution landscape instead.

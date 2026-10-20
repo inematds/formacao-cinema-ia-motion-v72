@@ -1,0 +1,3 @@
+5 quadros em quadros/
+COSTURA: diferente — o último quadro não volta ao primeiro
+saída: 1

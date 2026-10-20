@@ -1,0 +1,257 @@
+{
+  "slug": "audio",
+  "num": 7,
+  "menu": "Audio",
+  "titulo": "Audio y subtítulos en el código: narración local, pista musical y karaoke",
+  "titulo_curto": "Audio y subtítulos",
+  "minutos": 18,
+  "lead": "El mismo CLI que renderiza también habla y escucha, todo en tu máquina: genera la narración con una voz local, transcribe palabra por palabra con el tiempo de cada una y se lo entrega a la composición. En esta lección armas el lado técnico del sonido: narración, una pista de prueba y el subtítulo karaoke que ilumina cada palabra en el momento en que se dice.",
+  "objetivo": "generar narración local, sacar el tiempo de cada palabra y renderizar un video con audio y subtítulo karaoke.",
+  "competencias": [
+    "generar-narracao-local",
+    "transcrever-com-tempo-por-palavra",
+    "sincronizar-legenda-no-codigo"
+  ],
+  "aprende": [
+    {
+      "icone": "megafone",
+      "t": "tts: texto en WAV con la voz Kokoro, sin nube"
+    },
+    {
+      "icone": "lupa",
+      "t": "transcribe: el tiempo de cada palabra en un transcript.json"
+    },
+    {
+      "icone": "arquivo",
+      "t": "<code>&lt;audio&gt;</code> con id, data-start y data-volume en la composición"
+    },
+    {
+      "icone": "caneta",
+      "t": "Subtítulo de hasta tres palabras que se ilumina en el tiempo del habla"
+    }
+  ],
+  "hero_alt": "Mesa de edición de sonido con micrófono de estudio en brazo articulado, audífonos cerrados y un monitor con forma de onda.",
+  "secoes": [
+    {
+      "tipo": "diagrama",
+      "titulo": "Del texto al video con sonido",
+      "sub": "Haz clic en cada etapa. Nada sale de tu máquina.",
+      "nos": [
+        {
+          "icone": "caneta",
+          "titulo": "Texto",
+          "sub": "guion",
+          "detalhe": "La frase que se va a decir. El texto y la elección de voz son decisiones de guion y sonido, del curso 2; aquí es la tubería."
+        },
+        {
+          "icone": "megafone",
+          "titulo": "tts",
+          "sub": "Kokoro",
+          "detalhe": "hyperframes tts usa el modelo local Kokoro-82M. En la 0.8.176, --lang pt-br elige la pronunciación; la voz pf_dora funcionó en esta máquina (no está en la lista corta de --list, que apunta a las 54 voces de kokoro-onnx). Descarga unos 340 MB en el primer uso."
+        },
+        {
+          "icone": "lupa",
+          "titulo": "transcribe",
+          "sub": "whisper",
+          "detalhe": "hyperframes transcribe usa el whisper.cpp local y graba transcript.json con cada palabra, inicio y fin. El modelo small (multilingüe, ~490 MB) entiende portugués; los modelos .en, no."
+        },
+        {
+          "icone": "arquivo",
+          "titulo": "legendas.js",
+          "sub": "karaoke.py",
+          "detalhe": "El karaoke.py del kit agrupa las palabras de tres en tres, suma el retraso de la narración y graba un archivo que la composición lee al abrir. No se busca nada en la red durante el render."
+        },
+        {
+          "icone": "video",
+          "titulo": "render",
+          "sub": "con áudio",
+          "forte": true,
+          "detalhe": "<code>&lt;audio id&gt;</code> con data-start entra en la mezcla; data-volume baja la pista. Sin id, el audio no se mezcla y el video sale mudo."
+        }
+      ],
+      "legenda": "Voz, pista y mezcla como decisión creativa: curso 2 (Producción). Aquí, solo cómo poner el sonido en el código."
+    },
+    {
+      "tipo": "codigo",
+      "titulo": "Narración y tiempo de cada palabra",
+      "sub": "Una frase, la voz local en portugués y la transcripción con tiempo.",
+      "blocos": [
+        {
+          "rot": "Terminal · tts, duración y transcripción",
+          "icone": "megafone",
+          "conteudo": "K=~/projetos/formacao-cinema-ia-motion-v72/kit\nexport HYPERFRAMES_NO_TELEMETRY=1 NO_COLOR=1\nE=${TMPDIR:-/tmp}/ensaio-motion/a7; rm -rf \"$E\"; mkdir -p \"$E\"\ncp -r \"$K/exemplos/a7-karaoke\" \"$E/karaoke\"; cd \"$E/karaoke\"\nTEXTO=\"A voz sai do seu computador, e cada palavra sabe a hora de aparecer.\"\nnpx -y hyperframes@0.8.176 tts \"$TEXTO\" --voice pf_dora --lang pt-br -o narracao.wav > tts.log 2>&1; echo \"tts: $?\"\nffprobe -v error -show_entries format=duration -of csv=p=0 narracao.wav\nnpx -y hyperframes@0.8.176 transcribe narracao.wav -m small -l pt --json > transcricao.log 2>/dev/null; echo \"transcribe: $?\"\npython3 -c \"import json; print('palavras:', len(json.load(open('transcript.json'))))\""
+        }
+      ],
+      "saida": {
+        "selo": "real",
+        "abas": [
+          {
+            "rot": "Salida capturada (19/10/2026)",
+            "html": "<pre>tts: 0\n4.074667\ntranscribe: 0\npalavras: 14</pre><p>La segunda línea es la duración de la narración en segundos. El número de palabras verifica el transcript, no el texto: verifica las palabras abriendo el transcript.json.</p>"
+          },
+          {
+            "rot": "Error común: modelo .en",
+            "html": "<p>El modelo por defecto de transcribe en la 0.8.176 es small.en, solo inglés. Para portugués, pasa <code>-m small -l pt</code>: el small multilingüe no aparece en la lista del <code>--help</code> (tiny.en, base.en, small.en, medium.en, large-v3), pero funcionó en esta máquina (captura al lado). Y con <code>--engine auto</code> (por defecto) el CLI usa Parakeet si está instalado y cubre el idioma; si no, whisper.cpp.</p>"
+          }
+        ]
+      }
+    },
+    {
+      "tipo": "codigo",
+      "titulo": "La composición con sonido y karaoke",
+      "sub": "Título, la narración empezando en 0,5 s, una pista de ensayo al 25% y los subtítulos generados a partir del transcript.",
+      "blocos": [
+        {
+          "rot": "Archivo · kit/exemplos/a7-karaoke/index.html",
+          "icone": "arquivo",
+          "conteudo": "<!doctype html>\n<html lang=\"pt-BR\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=1920, height=1080\" />\n    <script src=\"https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js\"></script>\n    <script src=\"legendas.js\"></script>\n    <style>\n      * { margin: 0; padding: 0; box-sizing: border-box; }\n      html, body { width: 1920px; height: 1080px; overflow: hidden; background: #0c0c10; }\n      #root { width: 100%; height: 100%; position: relative; font-family: ui-sans-serif, system-ui, sans-serif; }\n      #luz { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 40%, #1c1c22 0%, #0c0c10 70%); }\n      #titulo { position: absolute; left: 0; right: 0; top: 300px; text-align: center; color: #f4f4f5; font-size: 110px; font-weight: 700; line-height: 1.1; }\n      .legenda { position: absolute; left: 0; right: 0; top: 820px; text-align: center; font-size: 70px; font-weight: 700; line-height: 1.2; color: #a1a1aa; opacity: 0; }\n      .legenda span { margin: 0 12px; }\n    </style>\n  </head>\n  <body>\n    <div id=\"root\" data-composition-id=\"main\" data-start=\"0\" data-duration=\"8\" data-width=\"1920\" data-height=\"1080\">\n      <div id=\"luz\"></div>\n      <h1 id=\"titulo\">Som no código</h1>\n      <audio id=\"narracao\" src=\"narracao.wav\" data-start=\"0.5\" data-track-index=\"1\"></audio>\n      <audio id=\"trilha\" src=\"trilha.wav\" data-start=\"0\" data-duration=\"8\" data-volume=\"0.25\" data-track-index=\"2\"></audio>\n    </div>\n    <script>\n      // legendas.js (gerado pelo karaoke.py) traz cada legenda com o tempo de cada palavra\n      const root = document.getElementById(\"root\");\n      const tl = gsap.timeline({ paused: true });\n      tl.fromTo(\"#titulo\", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: \"power3.out\" }, 0.1);\n      window.LEGENDAS.forEach((linha, i) => {\n        const el = document.createElement(\"p\");\n        el.className = \"legenda\";\n        el.id = \"legenda-\" + i;\n        linha.palavras.forEach((p, j) => {\n          const s = document.createElement(\"span\");\n          s.id = `palavra-${i}-${j}`;\n          s.textContent = p.t;\n          el.appendChild(s);\n          tl.set(s, { color: \"#f4f4f5\" }, p.inicio);   // a palavra acende quando é dita\n        });\n        root.appendChild(el);\n        tl.set(el, { opacity: 1 }, linha.inicio);\n        tl.set(el, { opacity: 0 }, linha.fim);\n      });\n      window.__timelines[\"main\"] = tl;\n    </script>\n  </body>\n</html>"
+        },
+        {
+          "rot": "Archivo · kit/karaoke.py",
+          "icone": "arquivo",
+          "conteudo": "#!/usr/bin/env python3\n\"\"\"karaoke.py — transforma o transcript.json (palavra + tempo) em legendas.js para a composição.\n\nUso:  python3 karaoke.py transcript.json --inicio 0.5 --por-linha 3 > legendas.js\n\n--inicio     segundos em que a narração começa no vídeo (o data-start do <audio>)\n--por-linha  palavras por legenda (padrão 3)\nImprime na saída de erro: \"palavras: N · legendas: M\".\n\"\"\"\nimport argparse\nimport json\nimport sys\n\n\ndef main():\n    a = argparse.ArgumentParser()\n    a.add_argument(\"transcript\")\n    a.add_argument(\"--inicio\", type=float, default=0.0)\n    a.add_argument(\"--por-linha\", type=int, default=3)\n    o = a.parse_args()\n    palavras = json.load(open(o.transcript, encoding=\"utf-8\"))\n    linhas = []\n    for i in range(0, len(palavras), o.por_linha):\n        grupo = palavras[i:i + o.por_linha]\n        linhas.append({\n            \"inicio\": round(grupo[0][\"start\"] + o.inicio, 3),\n            \"fim\": round(grupo[-1][\"end\"] + o.inicio, 3),\n            \"palavras\": [{\"t\": p[\"text\"], \"inicio\": round(p[\"start\"] + o.inicio, 3)} for p in grupo],\n        })\n    # cada legenda sai 0,15 s depois da última palavra, mas nunca depois que a próxima entra\n    for atual, prox in zip(linhas, linhas[1:] + [None]):\n        atual[\"fim\"] = round(min(atual[\"fim\"] + 0.15, prox[\"inicio\"]) if prox else atual[\"fim\"] + 0.15, 3)\n    print(\"window.LEGENDAS = \" + json.dumps(linhas, ensure_ascii=False) + \";\")\n    print(f\"palavras: {len(palavras)} · legendas: {len(linhas)}\", file=sys.stderr)\n\n\nif __name__ == \"__main__\":\n    main()"
+        },
+        {
+          "rot": "Terminal · pista, subtítulos, render y verificar",
+          "icone": "play",
+          "conteudo": "K=~/projetos/formacao-cinema-ia-motion-v72/kit\nexport HYPERFRAMES_NO_TELEMETRY=1 NO_COLOR=1\ncd ${TMPDIR:-/tmp}/ensaio-motion/a7/karaoke\n# trilha de ensaio: um acorde suave de 8 s gerado no ffmpeg (a sua trilha de verdade entra no lugar)\nffmpeg -v error -y -f lavfi -i \"aevalsrc=0.10*sin(2*PI*220*t)+0.07*sin(2*PI*277.18*t)+0.06*sin(2*PI*329.63*t):s=48000:d=8\" \\\n  -af \"afade=t=in:d=1,afade=t=out:st=6.5:d=1.5\" trilha.wav\npython3 \"$K/karaoke.py\" transcript.json --inicio 0.5 --por-linha 3 > legendas.js\nnpx -y hyperframes@0.8.176 check 2>&1 | grep -E \"Check passed|✗\"\nnpx -y hyperframes@0.8.176 render --quality draft --workers 2 --quiet --output karaoke.mp4 > render.log 2>&1\necho \"render: $?\"\npython3 \"$K/conferir.py\" karaoke.mp4 8 1920x1080 --audio; echo \"saída: $?\""
+        }
+      ],
+      "saida": {
+        "selo": "real",
+        "abas": [
+          {
+            "rot": "Salida capturada (19/10/2026)",
+            "html": "<pre>palavras: 14 · legendas: 5\n◇  Check passed\nrender: 0\nOK: 8,0 s · 1920×1080 · 30 fps · com áudio\nsaída: 0</pre><p>El verificador con --audio reprueba un video sin pista de sonido. La pista es solo un acorde generado por FFmpeg para el ensayo; la tuya entra en lugar de trilha.wav.</p>"
+          },
+          {
+            "rot": "Error que atrapamos en el ensayo",
+            "html": "<p>En la primera versión, cada subtítulo se quedaba 0,15 s después de la última palabra incluso cuando la siguiente ya había entrado: dos subtítulos se superponían en el fotograma. Ahora karaoke.py cierra cada subtítulo como máximo cuando se abre el siguiente. Solo apareció al mirar los fotogramas.</p>"
+          }
+        ]
+      }
+    },
+    {
+      "tipo": "pratica",
+      "titulo": "Práctica",
+      "sub": "Voz, karaoke y tu frase.",
+      "exercicios": [
+        {
+          "id": "e1",
+          "titulo": "E1 · Voz y palabras",
+          "min": "10 min",
+          "texto": "Ejecuta el bloque \"tts, duración y transcripción\". El primer uso descarga la voz y el modelo.",
+          "pronto": "<code>tts: 0</code>, una línea con la duración (número mayor que 0), <code>transcribe: 0</code> y <code>palavras:</code> seguido de un número mayor que 0."
+        },
+        {
+          "id": "e2",
+          "titulo": "E2 · Video con sonido",
+          "min": "10 min",
+          "texto": "Ejecuta el bloque \"pista, subtítulos, render y verificar\" y mira el karaoke.mp4.",
+          "pronto": "<code>◇  Check passed</code>, <code>render: 0</code> y <code>OK: 8,0 s · 1920×1080 · 30 fps · com áudio</code> con <code>saída: 0</code>."
+        },
+        {
+          "id": "e3",
+          "titulo": "E3 · Tu frase",
+          "min": "15 min",
+          "texto": "Cambia TEXTO por una frase tuya de hasta 5 s, ejecuta los dos bloques de nuevo (el segundo después del primero) y verifica el video.",
+          "pronto": "<code>python3 ~/projetos/formacao-cinema-ia-motion-v72/kit/conferir.py karaoke.mp4 8 1920x1080 --audio; echo \"saída: $?\"</code> → línea que termina en <code>com áudio</code> y <code>saída: 0</code>."
+        }
+      ]
+    },
+    {
+      "tipo": "quiz",
+      "titulo": "Prueba de la clase",
+      "sub": "La explicación aparece después de tu respuesta.",
+      "perguntas": [
+        {
+          "p": "El render salió mudo, pero el <code>&lt;audio&gt;</code> está en la composición. ¿Qué verificar primero?",
+          "opcoes": [
+            "Si el elemento de audio tiene id.",
+            "Si la pista se grabó en MP3 y no en WAV.",
+            "Si el video se está renderizando a 30 fps.",
+            "Si el video dura más de 5 segundos."
+          ],
+          "certa": 0,
+          "explica": "En HyperFrames, un audio sin id no entra en la mezcla y el lint avisa media_missing_id. Es el motivo más común de un video mudo.",
+          "ref": "diagrama"
+        },
+        {
+          "p": "¿Por qué los subtítulos vienen de un legendas.js grabado en la carpeta y no de una consulta en el momento?",
+          "opcoes": [
+            "Porque el navegador del render no puede leer JSON.",
+            "Porque HyperFrames prohíbe archivos .json en la carpeta.",
+            "Porque buscar durante el render rompe la repetición.",
+            "Porque el archivo queda más liviano y el render más rápido."
+          ],
+          "certa": 2,
+          "explica": "Es la regla de la clase 1: el dato entra antes del render, como archivo de la carpeta. El mismo legendas.js da siempre los mismos subtítulos.",
+          "ref": "codigo"
+        },
+        {
+          "p": "La narración empieza en 0,5 s en el video. ¿Dónde entra ese retraso?",
+          "opcoes": [
+            "Solo en el data-start del elemento de audio.",
+            "En el data-start del audio y en el --inicio de karaoke.py.",
+            "En el tts, con la opción --speed más lenta.",
+            "En ningún lugar: el motor ajusta todo solo."
+          ],
+          "certa": 1,
+          "explica": "El transcript cuenta el tiempo desde el inicio del WAV. Si el audio entra en 0,5 s, cada palabra tiene que entrar 0,5 s después también.",
+          "ref": "codigo"
+        },
+        {
+          "p": "¿Qué modelo del transcribe usar para una narración en portugués?",
+          "opcoes": [
+            "small.en, el predeterminado del transcribe en la 0.8.176.",
+            "tiny.en, que es el más rápido de todos.",
+            "base.en, siempre que pases -l pt junto.",
+            "small (multilingüe) con -l pt."
+          ],
+          "certa": 3,
+          "explica": "Los modelos .en solo transcriben inglés. El small multilingüe entiende portugués; el large-v3 se equivoca menos y tarda más.",
+          "ref": "codigo"
+        }
+      ]
+    },
+    {
+      "tipo": "resumo",
+      "titulo": "En tres frases",
+      "itens": [
+        {
+          "t": "Local",
+          "texto": "tts (Kokoro) y transcribe (whisper.cpp) corren en tu máquina, por el mismo CLI."
+        },
+        {
+          "t": "Tiempo por palabra",
+          "texto": "El transcript.json se convierte en legendas.js antes del render, con el retraso de la narración sumado."
+        },
+        {
+          "t": "Audio en el código",
+          "texto": "<code>&lt;audio&gt;</code> con id y data-start; data-volume para la pista; el verificador cobra la pista."
+        }
+      ]
+    },
+    {
+      "tipo": "links",
+      "titulo": "Para ir más allá",
+      "links": [
+        {
+          "t": "Curso 2 de la formación: el sonido como personaje, voz y pista",
+          "href": "https://inematds.github.io/formacao-cinema-ia-producao-v72/es/",
+          "icone": "megafone"
+        },
+        {
+          "t": "kokoro-onnx: las voces de Kokoro",
+          "href": "https://github.com/thewh1teagle/kokoro-onnx",
+          "icone": "megafone"
+        },
+        {
+          "t": "whisper.cpp",
+          "href": "https://github.com/ggml-org/whisper.cpp",
+          "icone": "lupa"
+        }
+      ]
+    }
+  ]
+}

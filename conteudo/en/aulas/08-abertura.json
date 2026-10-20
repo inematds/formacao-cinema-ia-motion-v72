@@ -1,0 +1,335 @@
+{
+  "slug": "abertura",
+  "num": 8,
+  "menu": "Your piece",
+  "titulo": "Your piece: a 15 s opening in 16:9 and 9:16, rendered and checked",
+  "titulo_curto": "Your opening",
+  "minutos": 20,
+  "lead": "Time to put it all together into a piece you actually use: a 15 s opening with your DESIGN.md, in the two formats social networks ask for. The 9:16 doesn't come from the 16:9 through a render option: it's another composition that reuses the CSS and the choreography. In this lesson you deliver both, checked by the kit, and build the plan with dates.",
+  "objetivo": "deliver a 15 s opening in 16:9 and 9:16, with the DESIGN.md, checked by the kit in both formats.",
+  "competencias": [
+    "compor-em-dois-formatos",
+    "reaproveitar-estilo-e-coreografia",
+    "conferir-entrega-final"
+  ],
+  "aprende": [
+    {
+      "icone": "camadas",
+      "t": "One project, two compositions: index.html and formatos/vertical.html"
+    },
+    {
+      "icone": "marca",
+      "t": "Shared CSS and choreography, only the size changes"
+    },
+    {
+      "icone": "fila",
+      "t": "Render queue: one at a time, and retry only what failed"
+    },
+    {
+      "icone": "calendario",
+      "t": "The course map and your plan with dates"
+    }
+  ],
+  "hero_alt": "Two monitors in a dark editing room, one horizontal and one vertical, showing the same opening frame.",
+  "secoes": [
+    {
+      "tipo": "mapa",
+      "titulo": "The map of your piece",
+      "sub": "The four deliverables the opening brings together. Click a step to see the \"done when\".",
+      "degraus": [
+        {
+          "aula": "hyperframes",
+          "icone": "terminal",
+          "quando": "Step 1",
+          "titulo": "Project",
+          "sub": "init e render",
+          "saida": "HyperFrames project that renders and passes the checker.",
+          "passo": "The project from lesson 2, with the version pinned and telemetry turned off. This is the folder where the opening will live."
+        },
+        {
+          "aula": "marca",
+          "icone": "marca",
+          "quando": "Step 2",
+          "titulo": "Brand",
+          "sub": "DESIGN.md",
+          "saida": "DESIGN.md with the four sections and checked colors.",
+          "passo": "The DESIGN.md from lesson 4 sets the colors and the motion for both formats."
+        },
+        {
+          "aula": "rise",
+          "icone": "robo",
+          "quando": "Step 3",
+          "titulo": "Request",
+          "sub": "RISE e quadros",
+          "saida": "A composition the agent made and you checked across five frames.",
+          "passo": "The RISE request from lesson 3, now for 15 s and two formats. The E includes the check and the frames of both."
+        },
+        {
+          "aula": "audio",
+          "icone": "megafone",
+          "quando": "Step 4",
+          "titulo": "Sound",
+          "sub": "optional",
+          "saida": "Narration or soundtrack in code, checked with --audio.",
+          "passo": "If your opening has a voice or a soundtrack, lesson 7 adds the sound. If it doesn't, skip it: the checker says \"sem áudio\" and it's right."
+        }
+      ],
+      "resultado": {
+        "titulo": "By the end of the course",
+        "texto": "An opening of your own in 16:9 and 9:16, with a DESIGN.md, rendered locally and checked.",
+        "total": "24 exercises"
+      },
+      "legenda": "Lessons 1, 5 and 6 are the base: determinism, Remotion and libraries come in when your piece calls for them."
+    },
+    {
+      "tipo": "codigo",
+      "titulo": "The opening in both formats",
+      "sub": "abertura.css and abertura.js are shared; index.html (1920×1080) and formatos/vertical.html (1080×1920) only change the root and one class.",
+      "blocos": [
+        {
+          "rot": "File · kit/exemplos/a8-abertura/abertura.css",
+          "icone": "arquivo",
+          "conteudo": "/* DESIGN.md tokens + a layout that works for both formats (16:9 and 9:16) */\n:root { --fundo: #0c0c10; --superficie: #1c1c22; --linha: #3f3f47; --texto: #f4f4f5; --texto2: #a1a1aa; --destaque: #e9b949; }\n* { margin: 0; padding: 0; box-sizing: border-box; }\nhtml, body { overflow: hidden; background: var(--fundo); }\n#root { width: 100%; height: 100%; position: relative; font-family: ui-sans-serif, system-ui, sans-serif; }\n#luz { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 45%, var(--superficie) 0%, var(--fundo) 70%); }\n#bloco { position: absolute; left: 10%; right: 10%; top: 50%; transform: translateY(-50%); }\n#rotulo { color: var(--texto2); font-size: 40px; letter-spacing: 0.2em; text-transform: uppercase; line-height: 1.3; }\n#titulo { color: var(--texto); font-size: 150px; font-weight: 700; line-height: 1.1; margin-top: 36px; }\n#apoio { color: var(--texto2); font-size: 54px; line-height: 1.2; margin-top: 40px; }\n#trilho { position: absolute; left: 10%; right: 10%; bottom: 14%; height: 4px; background: var(--linha); transform-origin: left center; }\n#cabeca { position: absolute; left: 10%; bottom: calc(14% - 38px); width: 18px; height: 80px; background: var(--destaque); border-radius: 4px; }\n/* 9:16: same piece, larger type relative to the width, everything stacked */\n.vertical #titulo { font-size: 132px; }\n.vertical #apoio { font-size: 56px; }\n.vertical #rotulo { font-size: 36px; }"
+        },
+        {
+          "rot": "File · kit/exemplos/a8-abertura/abertura.js",
+          "icone": "arquivo",
+          "conteudo": "// The same choreography in both formats: only the playhead's travel distance depends on the width.\nwindow.criaAbertura = function () {\n  const root = document.getElementById(\"root\");\n  const largura = Number(root.dataset.width);\n  const corrida = largura * 0.8 - 18; // from the start to the end of the track (80% of the width)\n  const tl = gsap.timeline({ paused: true });\n  tl.fromTo(\"#trilho\", { scaleX: 0 }, { scaleX: 1, duration: 1.2, ease: \"power2.inOut\" }, 0.4);\n  tl.fromTo(\"#cabeca\", { opacity: 0 }, { opacity: 1, duration: 0.3 }, 1.4);\n  tl.fromTo(\"#rotulo\", { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: \"power2.out\" }, 2.0);\n  tl.fromTo(\"#cabeca\", { x: 0 }, { x: corrida, duration: 9, ease: \"power1.inOut\" }, 2.0);\n  tl.fromTo(\"#titulo\", { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: \"power3.out\" }, 4.0);\n  tl.fromTo(\"#apoio\", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, ease: \"power2.out\" }, 7.5);\n  // from 11 s to 15 s the main frame holds (DESIGN.md rule: the ending holds for at least 1.5 s)\n  return tl;\n};"
+        },
+        {
+          "rot": "File · kit/exemplos/a8-abertura/index.html",
+          "icone": "arquivo",
+          "conteudo": "<!doctype html>\n<html lang=\"pt-BR\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=1920, height=1080\" />\n    <script src=\"https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js\"></script>\n    <link rel=\"stylesheet\" href=\"abertura.css\" />\n    <style>html, body { width: 1920px; height: 1080px; }</style>\n  </head>\n  <body>\n    <div id=\"root\" data-composition-id=\"main\" data-start=\"0\" data-duration=\"15\" data-width=\"1920\" data-height=\"1080\">\n      <div id=\"luz\"></div>\n      <div id=\"bloco\">\n        <p id=\"rotulo\">Formação Cinema com IA</p>\n        <h1 id=\"titulo\">Motion por&nbsp;código</h1>\n        <p id=\"apoio\">HyperFrames e Remotion, do terminal ao&nbsp;MP4</p>\n      </div>\n      <div id=\"trilho\"></div>\n      <div id=\"cabeca\"></div>\n    </div>\n    <script src=\"abertura.js\"></script>\n    <script>window.__timelines[\"main\"] = window.criaAbertura();</script>\n  </body>\n</html>"
+        },
+        {
+          "rot": "Terminal · brand, check, two renders and conferir",
+          "icone": "play",
+          "conteudo": "K=~/projetos/formacao-cinema-ia-motion-v72/kit\nexport HYPERFRAMES_NO_TELEMETRY=1 NO_COLOR=1\nE=${TMPDIR:-/tmp}/ensaio-motion/a8; rm -rf \"$E\"; mkdir -p \"$E\"\ncp -r \"$K/exemplos/a8-abertura\" \"$E/abertura\"; cd \"$E/abertura\"\npython3 \"$K/conferir-design.py\" DESIGN.md abertura.css; echo \"saída: $?\"\nnpx -y hyperframes@0.8.176 check 2>&1 | grep -E \"Check passed|✗\"\nnpx -y hyperframes@0.8.176 render --quality draft --workers 2 --quiet --output renders/abertura-16x9.mp4 > render-16x9.log 2>&1\nnpx -y hyperframes@0.8.176 render -c formatos/vertical.html --quality draft --workers 2 --quiet --output renders/abertura-9x16.mp4 > render-9x16.log 2>&1\npython3 \"$K/conferir.py\" renders/abertura-16x9.mp4 15 1920x1080; echo \"saída: $?\"\npython3 \"$K/conferir.py\" renders/abertura-9x16.mp4 15 1080x1920; echo \"saída: $?\""
+        }
+      ],
+      "saida": {
+        "selo": "real",
+        "abas": [
+          {
+            "rot": "Captured output (10/19/2026)",
+            "html": "<pre>OK: 4 seções · 6 cores · 5 regras de movimento · a composição usa só cores do DESIGN.md\nsaída: 0\n◇  Check passed\nOK: 15,0 s · 1920×1080 · 30 fps · sem áudio\nsaída: 0\nOK: 15,0 s · 1080×1920 · 30 fps · sem áudio\nsaída: 0</pre><p>The 9:16 render uses -c formatos/vertical.html. vertical.html is index.html with the root at 1080×1920, the vertical class, and the paths ../abertura.css and ../abertura.js.</p>"
+          },
+          {
+            "rot": "Error caught: --resolution portrait",
+            "html": "<pre>✗  Output resolution incompatible\n\n   outputResolution portrait (1080×1920) does not match the aspect ratio of the composition (1920×1080). The composition is landscape, so use --resolution landscape instead.</pre><p>The --resolution option changes the resolution within the same aspect ratio (for example, 4K). Going from 16:9 to 9:16 means changing the framing: a different composition.</p>"
+          },
+          {
+            "rot": "A lone word",
+            "html": "<p>On the first render, the 9:16 broke the title into \"Motion por\" / \"código\": failure 2 from lesson 3. The fix was to tie the last two words together with &amp;nbsp; in the HTML (\"por&amp;nbsp;código\"). It only showed up by looking at the frames.</p>"
+          }
+        ]
+      }
+    },
+    {
+      "tipo": "codigo",
+      "titulo": "The error, isolated",
+      "sub": "Trying to get the 9:16 out of the 16:9 composition with a render option.",
+      "blocos": [
+        {
+          "rot": "Terminal · render with --resolution portrait",
+          "icone": "x",
+          "conteudo": "export HYPERFRAMES_NO_TELEMETRY=1 NO_COLOR=1\ncd ${TMPDIR:-/tmp}/ensaio-motion/a8/abertura\nnpx -y hyperframes@0.8.176 render --resolution portrait --quality draft --output renders/torto.mp4 2>&1 | grep -A2 \"incompatible\""
+        }
+      ]
+    },
+    {
+      "tipo": "simfila",
+      "titulo": "The render queue",
+      "sub": "On an ordinary machine, renders run one at a time. Run it, interrupt it and run it again: only what was left over goes back in the queue.",
+      "tarefas": [
+        "check for 16:9",
+        "render 16:9",
+        "check for 9:16",
+        "render 9:16",
+        "check both MP4 files"
+      ],
+      "falha": 3,
+      "rot": {
+        "entrada": "fila/",
+        "rodando": "rodando/",
+        "feito": "pronto/",
+        "falhou": "falhou/",
+        "rodar": "Run the queue",
+        "parar": "Interrupt (Ctrl+C)",
+        "zerar": "Start over"
+      },
+      "msg": {
+        "inicio": "5 steps in fila/. Click \"Run the queue\".",
+        "rodando": "One step at a time: rendering is heavy, and two Chrome instances together fight over memory.",
+        "parou": "Interrupted. The middle step stayed in rodando/. Run it again to see the resume.",
+        "retoma": "Resume: what was in rodando/ went back to the queue. What is already in pronto/ is not redone.",
+        "fim": "Queue empty: both formats rendered and checked.",
+        "fimfalha": "Queue empty. The 9:16 render went to falhou/: it's the only one you redo, not the 16:9."
+      },
+      "legenda": "Browser simulation: nothing really renders. The failure is on purpose, to show that only the step that failed goes back."
+    },
+    {
+      "tipo": "pratica",
+      "titulo": "Practice",
+      "sub": "The rehearsal, the error, and your opening.",
+      "exercicios": [
+        {
+          "id": "e1",
+          "titulo": "E1 · Two formats of the example",
+          "min": "10 min",
+          "texto": "Run the \"brand, check, two renders and conferir\" block.",
+          "pronto": "<code>OK: 15,0 s · 1920×1080 · 30 fps · sem áudio</code> and <code>OK: 15,0 s · 1080×1920 · 30 fps · sem áudio</code>, each with <code>saída: 0</code>."
+        },
+        {
+          "id": "e2",
+          "titulo": "E2 · The shortcut that doesn't exist",
+          "min": "5 min",
+          "texto": "Run the --resolution portrait block.",
+          "pronto": "<code>✗  Output resolution incompatible</code> and the line that ends in <code>use --resolution landscape instead.</code>"
+        },
+        {
+          "id": "e3",
+          "titulo": "E3 · Your opening",
+          "min": "60 min",
+          "texto": "In your project, with your DESIGN.md: ask the agent (RISE) for the 15 s opening in index.html and formatos/vertical.html, check the frames, render both, and run the checker on both.",
+          "pronto": "<code>K=~/projetos/formacao-cinema-ia-motion-v72/kit; python3 $K/conferir.py renders/abertura-16x9.mp4 15 1920x1080; python3 $K/conferir.py renders/abertura-9x16.mp4 15 1080x1920; python3 $K/conferir-design.py DESIGN.md abertura.css; echo \"saída: $?\"</code> → two lines starting with <code>OK: 15,0 s</code>, one with <code>OK: 4 seções</code> and <code>saída: 0</code>."
+        }
+      ]
+    },
+    {
+      "tipo": "gerador",
+      "titulo": "Generate your plan with dates",
+      "sub": "Pick a start date and how much time you have per week.",
+      "curso": "Motion as code with an agent",
+      "horas_padrao": 4,
+      "degraus": [
+        {
+          "titulo": "Lesson 1 · Video is code",
+          "aula": "codigo"
+        },
+        {
+          "titulo": "Lesson 2 · HyperFrames from scratch",
+          "aula": "hyperframes"
+        },
+        {
+          "titulo": "Lesson 3 · Asking the agent",
+          "aula": "rise"
+        },
+        {
+          "titulo": "Lesson 4 · The video's DESIGN.md",
+          "aula": "marca"
+        },
+        {
+          "titulo": "Lesson 5 · Remotion",
+          "aula": "remotion"
+        },
+        {
+          "titulo": "Lesson 6 · Which library",
+          "aula": "bibliotecas"
+        },
+        {
+          "titulo": "Lesson 7 · Audio and captions",
+          "aula": "audio"
+        },
+        {
+          "titulo": "Lesson 8 · Your opening",
+          "aula": "abertura"
+        }
+      ],
+      "txt": {
+        "titulo": "Plan — Motion by code with an agent",
+        "inicio": "Start",
+        "ritmo": "Pace",
+        "termino": "Expected finish",
+        "ate": "by",
+        "pronto": "done when",
+        "semanas": "weeks",
+        "travou": "## What got stuck and the rule I created",
+        "h": "h per week",
+        "exs": "exercises"
+      }
+    },
+    {
+      "tipo": "quiz",
+      "titulo": "Lesson quiz",
+      "sub": "The explanation appears after you answer.",
+      "perguntas": [
+        {
+          "p": "How do you get the 9:16 out of the same opening?",
+          "opcoes": [
+            "render --resolution portrait on the 16:9 composition.",
+            "Rotate the 16:9 MP4 in FFmpeg and adjust the scale.",
+            "Another 1080×1920 composition with the same CSS.",
+            "Crop the sides of the 16:9 in a video editor."
+          ],
+          "certa": 2,
+          "explica": "0.8.176 refuses --resolution portrait on a landscape composition. Rotating or cropping loses text and framing. Another composition with the same style is the path the render accepts.",
+          "ref": "codigo"
+        },
+        {
+          "p": "Why does the choreography read the root's width (data-width)?",
+          "opcoes": [
+            "Because GSAP only accepts distances in absolute pixels.",
+            "So the head can run the whole track in both formats.",
+            "Because lint requires reading data-width in every composition.",
+            "So the vertical video ends up shorter than the horizontal one."
+          ],
+          "certa": 1,
+          "explica": "The track takes up 80% of the width; the distance changes between 1920 and 1080 px. Reading the root's measure lets one choreography serve both.",
+          "ref": "codigo"
+        },
+        {
+          "p": "The 9:16 render failed after the 16:9 was done. What do you redo?",
+          "opcoes": [
+            "Only the 9:16 render, and check it.",
+            "Everything, from the 16:9 check.",
+            "Both renders together, to save time.",
+            "Nothing: deliver only the 16:9."
+          ],
+          "certa": 0,
+          "explica": "What is done and checked is not redone. And rendering both together on a busy machine is how the second one fails from memory.",
+          "ref": "simfila"
+        }
+      ]
+    },
+    {
+      "tipo": "resumo",
+      "titulo": "In three sentences",
+      "itens": [
+        {
+          "t": "Two formats",
+          "texto": "Two compositions, one style: shared CSS and choreography."
+        },
+        {
+          "t": "Delivery",
+          "texto": "DESIGN.md checked, check passing, and the checker run on both MP4s."
+        },
+        {
+          "t": "Queue",
+          "texto": "One render at a time; redo only what failed."
+        }
+      ]
+    },
+    {
+      "tipo": "links",
+      "titulo": "Next step",
+      "links": [
+        {
+          "t": "Course 4 of the program: the video factory with agents",
+          "href": "https://inematds.github.io/formacao-cinema-ia-fabrica-v72/en/",
+          "icone": "seta"
+        },
+        {
+          "t": "Course 5: cinematic websites (the video becomes a page)",
+          "href": "https://inematds.github.io/formacao-cinema-ia-sites-v72/en/",
+          "icone": "camadas"
+        },
+        {
+          "t": "This course's kit on GitHub",
+          "href": "https://github.com/inematds/formacao-cinema-ia-motion-v72/tree/main/kit",
+          "icone": "git"
+        }
+      ]
+    }
+  ]
+}

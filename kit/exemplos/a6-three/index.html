@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: #0c0c10; }
+      #root { width: 100%; height: 100%; position: relative; }
+      #cena3d { position: absolute; inset: 0; width: 1920px; height: 1080px; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-no-timeline data-start="0" data-duration="4" data-width="1920" data-height="1080">
+      <canvas id="cena3d"></canvas>
+    </div>
+    <script type="module">
+      // Three.js no HyperFrames: o quadro vem do tempo que o HyperFrames manda (hf-seek), nunca do relógio.
+      import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.181.2/+esm";
+      const canvas = document.getElementById("cena3d");
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+      renderer.setSize(1920, 1080, false);
+      renderer.setPixelRatio(1);
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x0c0c10);
+      const camera = new THREE.PerspectiveCamera(35, 1920 / 1080, 0.1, 100);
+      camera.position.set(0, 0, 6);
+      const forma = new THREE.Mesh(
+        new THREE.IcosahedronGeometry(1.4, 1),
+        new THREE.MeshStandardMaterial({ color: 0xd4d4d8, roughness: 0.4, flatShading: true })
+      );
+      scene.add(forma);
+      scene.add(new THREE.AmbientLight(0xffffff, 0.4));
+      const luz = new THREE.DirectionalLight(0xffffff, 2);
+      luz.position.set(3, 4, 5);
+      scene.add(luz);
+      function desenha(t) {
+        forma.rotation.y = t * 0.8;
+        forma.rotation.x = t * 0.3;
+        renderer.render(scene, camera);
+      }
+      window.addEventListener("hf-seek", (e) => desenha(e.detail.time));
+      desenha(window.__hfThreeTime || 0);
+    </script>
+  </body>
+</html>

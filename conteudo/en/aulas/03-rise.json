@@ -1,0 +1,280 @@
+{
+  "slug": "rise",
+  "num": 3,
+  "menu": "RISE",
+  "titulo": "Ask the agent: the RISE method and the five-frame test",
+  "titulo_curto": "Ask the agent",
+  "minutos": 15,
+  "lead": "A vague request produces generic animation and ten rounds of fixes. RISE organizes the request into four parts: References, Idea, Style, and Examine. The last one saves you the most: the agent checks five frames and fixes things before you render. In this lesson you write the request and check the result with a command.",
+  "objetivo": "write a RISE request for your agent and check the result in five frames before rendering.",
+  "competencias": [
+    "escrever-pedido-rise",
+    "conferir-em-cinco-quadros",
+    "pedir-correcao-especifica"
+  ],
+  "aprende": [
+    {
+      "icone": "arquivo",
+      "t": "The four parts of the request and what goes in each"
+    },
+    {
+      "icone": "lupa",
+      "t": "The snapshot: five frames in seconds, without rendering the video"
+    },
+    {
+      "icone": "check",
+      "t": "The loop seam checked by pixel"
+    },
+    {
+      "icone": "lista",
+      "t": "The 10 failures of an amateur animation, to look for in the frames"
+    }
+  ],
+  "hero_alt": "Sheet with five hand-drawn pencil thumbnails of frames, a magnifying glass, and a pencil on the editing desk.",
+  "secoes": [
+    {
+      "tipo": "diagrama",
+      "titulo": "The four parts of the request",
+      "sub": "Click each letter.",
+      "estilo": "escada",
+      "nos": [
+        {
+          "icone": "pasta",
+          "titulo": "References",
+          "sub": "R",
+          "detalhe": "What is true and not made up: the DESIGN.md (lesson 4), the logo file, the project folder, the HyperFrames version. \"Use exactly these.\""
+        },
+        {
+          "icone": "caneta",
+          "titulo": "Idea",
+          "sub": "I",
+          "detalhe": "One image with a start, middle, and end, in seconds. One main change. In a loop, the last frame is the same as the first."
+        },
+        {
+          "icone": "marca",
+          "titulo": "Style",
+          "sub": "S",
+          "detalhe": "Look AND motion: colors in hex, font, weight; ease-in and ease-out curves, what moves first, how long the text stays still."
+        },
+        {
+          "icone": "lupa",
+          "titulo": "Examine",
+          "sub": "E",
+          "forte": true,
+          "detalhe": "How the agent proves it is done: check passing, five frames taken with snapshot, the checks for each frame, and \"fix and repeat until it passes.\" And \"do not render\": the render is yours."
+        }
+      ],
+      "volta": "a frame failed → fix it and examine again",
+      "legenda": "RISE method from the INEMA motion-rise course, adapted to HyperFrames: the E uses check and snapshot instead of its own canvas."
+    },
+    {
+      "tipo": "codigo",
+      "titulo": "The finished request",
+      "sub": "A 6 s loop over an editing timeline. Copy it into the project folder and paste it into the agent (Claude Code or Codex, with the top model of your subscription).",
+      "blocos": [
+        {
+          "rot": "File · kit/prompts/rise-loop.md",
+          "icone": "arquivo",
+          "conteudo": "R — REFERENCES\nRead the DESIGN.md in this folder before anything else: colors, fonts and motion rules come from it. Do not invent a logo, color or font.\nHyperFrames 0.8.176 project in this folder (index.html already created by init).\n\nI — IDEA\nA 6-second loop, 1920x1080, over an editing timeline.\n- Start (0–0.6 s): the timeline track and the playhead stopped on the left.\n- Middle (0.6–4.2 s): the playhead runs to the right; the title \"Cena 1\" enters and leaves.\n- End (4.2–6 s): the playhead goes back to the left and stops. The last frame is the same as the first.\n\nS — STYLE\nLook: background #0c0c10 with soft light in the center, track #3f3f47, playhead #e9b949 (the only accent color), white title #f4f4f5 in the system sans-serif, weight 700.\nMotion: nothing at constant speed (power1 to power3, soft ease-in and ease-out); the title stays legible for at least 1.2 s; one thing moves at a time.\n\nE — EXAMINE\nWrite everything in a single paused GSAP timeline registered in window.__timelines[\"main\"], with no Math.random and no Date.now.\nRun `npx hyperframes@0.8.176 check` and fix until \"Check passed\" shows up.\nTake 5 frames with `npx hyperframes@0.8.176 snapshot --at 0,1.5,3,4.5,5.9 --no-end -o quadros`, look at the contact-sheet.jpg and check:\nthe 0 s frame is the same as the 5.9 s frame; no cut-off letters; no single word alone on a line; the title appears in full in the 3 s frame.\nFix whatever fails and repeat until everything passes. Do not render the MP4: I render it after I see the frames."
+        },
+        {
+          "rot": "In the agent · inside the project folder",
+          "icone": "robo",
+          "conteudo": "Read rise-loop.md and do exactly what it asks. At the end, tell me the check result and what you fixed after looking at the 5 frames."
+        }
+      ]
+    },
+    {
+      "tipo": "codigo",
+      "titulo": "The E in your hands: five frames and the seam",
+      "sub": "The kit/exemplos/a3-loop folder has a composition made from this request. The rehearsal runs the check, takes five frames, and compares the first with the last.",
+      "blocos": [
+        {
+          "rot": "Terminal · check, five frames and seam",
+          "icone": "lupa",
+          "conteudo": "K=~/projetos/formacao-cinema-ia-motion-v72/kit\nexport HYPERFRAMES_NO_TELEMETRY=1 NO_COLOR=1\nunset GEMINI_API_KEY   # sem isso, o snapshot manda os quadros ao Gemini sozinho\nE=${TMPDIR:-/tmp}/ensaio-motion/a3; rm -rf \"$E\"; mkdir -p \"$E\"\ncp -r \"$K/exemplos/a3-loop\" \"$E/loop\"; cd \"$E/loop\"\nnpx -y hyperframes@0.8.176 check 2>&1 | grep -E \"Check passed|✗\"\nnpx -y hyperframes@0.8.176 snapshot --at 0,1.5,3,4.5,5.9 --no-end -o quadros > snapshot.log 2>&1\nbash \"$K/costura.sh\" quadros; echo \"saída: $?\""
+        },
+        {
+          "rot": "Terminal · the error: removing the playhead's return",
+          "icone": "x",
+          "conteudo": "K=~/projetos/formacao-cinema-ia-motion-v72/kit\nexport HYPERFRAMES_NO_TELEMETRY=1 NO_COLOR=1\nunset GEMINI_API_KEY\ncd ${TMPDIR:-/tmp}/ensaio-motion/a3/loop\nsed -i '/x: 0, duration: 1.2/d' index.html   # tira a volta da cabeça de leitura\nnpx -y hyperframes@0.8.176 snapshot --at 0,1.5,3,4.5,5.9 --no-end -o quadros > snapshot.log 2>&1\nbash \"$K/costura.sh\" quadros; echo \"saída: $?\""
+        }
+      ],
+      "saida": {
+        "selo": "real",
+        "abas": [
+          {
+            "rot": "Captured output (10/19/2026)",
+            "html": "<pre>◇  Check passed\n5 quadros em quadros/\nCOSTURA: igual (quadro inicial = quadro final)\nsaída: 0</pre><p>The frames are saved in quadros/ (frame-00-at-0s.png through frame-04-at-5.9s.png) with a contact-sheet.jpg, the grid that you and the agent look at.</p>"
+          },
+          {
+            "rot": "Error caught: without the return",
+            "html": "<pre>5 quadros em quadros/\nCOSTURA: diferente — o último quadro não volta ao primeiro\nsaída: 1</pre><p>Without the last movement, the playhead ends on the right and the loop jumps. The command catches the failure before any render.</p>"
+          },
+          {
+            "rot": "Careful: snapshot and Gemini",
+            "html": "<p>In 0.8.176, <code>snapshot</code> has the <code>--describe</code> option, which sends the frames to Gemini for analysis and runs on its own when <code>GEMINI_API_KEY</code> exists in the environment (text from <code>snapshot --help</code>). The blocks run <code>unset GEMINI_API_KEY</code> so nothing leaves the machine.</p>"
+          }
+        ]
+      }
+    },
+    {
+      "tipo": "passos",
+      "titulo": "What to look for in the five frames",
+      "sub": "The 10 motion-rise failures, in four groups. Paste the list at the end of the request or check it yourself in the contact-sheet.",
+      "passos": [
+        {
+          "titulo": "Text",
+          "sub": "failures 1, 2, 7",
+          "texto": [
+            "Clipped letters (line height 1.1 or more; check g, j, p, q, y).",
+            "A single word alone on the last line: rewrite it, or tie the last two words together with a non-breaking space.",
+            "Every piece of text holds still for at least 1.2 s."
+          ]
+        },
+        {
+          "titulo": "Stage",
+          "sub": "failures 3, 4, 9",
+          "texto": [
+            "The visual fills 80% to 95% of the frame.",
+            "Light falls off across the frame: no flat color.",
+            "One idea on a calm background."
+          ]
+        },
+        {
+          "titulo": "Motion",
+          "sub": "failures 5, 6",
+          "texto": [
+            "Nothing at constant speed: smooth entrances and exits.",
+            "In a loop, the last frame matches the first (costura.sh checks it)."
+          ]
+        },
+        {
+          "titulo": "Brand",
+          "sub": "failures 8, 10",
+          "texto": [
+            "Logo only from the file, never drawn from memory.",
+            "Subtle texture so it doesn't look like plastic."
+          ]
+        }
+      ]
+    },
+    {
+      "tipo": "pratica",
+      "titulo": "Practice",
+      "sub": "The rehearsal, the error, and your agent.",
+      "exercicios": [
+        {
+          "id": "e1",
+          "titulo": "E1 · Five frames and seam",
+          "min": "5 min",
+          "texto": "Run the \"check, five frames and seam\" block and open quadros/contact-sheet.jpg.",
+          "pronto": "<code>◇  Check passed</code>, <code>5 quadros em quadros/</code>, <code>COSTURA: igual (quadro inicial = quadro final)</code> and <code>saída: 0</code>."
+        },
+        {
+          "id": "e2",
+          "titulo": "E2 · Watch the seam open",
+          "min": "5 min",
+          "texto": "Run the error block, which removes the playhead's return.",
+          "pronto": "<code>COSTURA: diferente — o último quadro não volta ao primeiro</code> and <code>saída: 1</code>."
+        },
+        {
+          "id": "e3",
+          "titulo": "E3 · Your agent makes the loop",
+          "min": "20 min",
+          "texto": "In a new project (npx hyperframes@0.8.176 init meu-loop --non-interactive), copy kit/prompts/rise-loop.md and kit/exemplos/a4-marca/DESIGN.md into the folder and send the request to your agent. (The DESIGN.md comes ready; lesson 4 explains each section.) Then run the check and the snapshot from the block yourself.",
+          "pronto": "In the meu-loop folder: <code>npx hyperframes@0.8.176 check</code> ends with <code>Check passed</code> and <code>bash ~/projetos/formacao-cinema-ia-motion-v72/kit/costura.sh quadros; echo \"saída: $?\"</code> → <code>COSTURA: igual</code> and <code>saída: 0</code>."
+        }
+      ]
+    },
+    {
+      "tipo": "quiz",
+      "titulo": "Lesson quiz",
+      "sub": "The explanation appears after you answer.",
+      "perguntas": [
+        {
+          "p": "Which part of RISE tells the agent how to prove it's finished?",
+          "opcoes": [
+            "References",
+            "Idea",
+            "Style",
+            "Examine"
+          ],
+          "certa": 3,
+          "explica": "The E brings the gate (check), the frames to capture, what to check in each one, and the order of fix and repeat. Without it, the agent declares done on the first file that runs.",
+          "ref": "diagrama"
+        },
+        {
+          "p": "Why does the request end with \"don't render the MP4\"?",
+          "opcoes": [
+            "Because the agent doesn't know how to run the render command.",
+            "Because render is the expensive step: it comes after the frames.",
+            "Because the snapshot already generates the full MP4 along the way.",
+            "Because a render done by the agent spends video credit."
+          ],
+          "certa": 1,
+          "explica": "Five frames come out in seconds; the full render takes minutes and ties up the machine. Looking first avoids rendering the wrong thing. A local render spends no platform credit at all.",
+          "ref": "codigo"
+        },
+        {
+          "p": "costura.sh said \"diferente\". What should you ask the agent for?",
+          "opcoes": [
+            "That the last frame return to the first, and check again.",
+            "That it increase the video's duration to fit the motion.",
+            "That it render right away at delivery quality to see better.",
+            "That it swap GSAP for CSS animation, which is simpler."
+          ],
+          "certa": 0,
+          "explica": "A specific fix, with the criterion attached: what needs to change and how it's checked. \"Improve the loop\" produces another round in the dark.",
+          "ref": "pratica"
+        },
+        {
+          "p": "Where do the colors and the font go in the request?",
+          "opcoes": [
+            "In the Idea, together with the description of the start and the end.",
+            "In Examine, as one of the frame checks.",
+            "In Style, taken from the DESIGN.md cited in R.",
+            "Nowhere: the agent picks whatever fits."
+          ],
+          "certa": 2,
+          "explica": "Style describes look and motion; R points to the file that rules (the DESIGN.md from lesson 4). That way the agent doesn't invent colors.",
+          "ref": "diagrama"
+        }
+      ]
+    },
+    {
+      "tipo": "resumo",
+      "titulo": "In three sentences",
+      "itens": [
+        {
+          "t": "RISE",
+          "texto": "References, Idea, Style, and Examine, in that order, in a file that stays in the folder."
+        },
+        {
+          "t": "Five frames",
+          "texto": "The snapshot shows the video in seconds; costura.sh checks the loop pixel by pixel."
+        },
+        {
+          "t": "Specific fix",
+          "texto": "What to change and how to check it, never \"improve it.\""
+        }
+      ]
+    },
+    {
+      "tipo": "links",
+      "titulo": "Going further",
+      "links": [
+        {
+          "t": "Motion in code: the RISE method (INEMA course)",
+          "href": "https://inematds.github.io/motion-rise/",
+          "icone": "arquivo"
+        },
+        {
+          "t": "HyperFrames: official repository",
+          "href": "https://github.com/heygen-com/hyperframes",
+          "icone": "git"
+        }
+      ]
+    }
+  ]
+}

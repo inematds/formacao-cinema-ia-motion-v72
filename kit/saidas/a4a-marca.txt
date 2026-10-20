@@ -1,0 +1,4 @@
+OK: 4 seções · 6 cores · 5 regras de movimento · a composição usa só cores do DESIGN.md
+saída: 0
+  ◇ 7/7 text checks pass WCAG AA
+◇  Check passed

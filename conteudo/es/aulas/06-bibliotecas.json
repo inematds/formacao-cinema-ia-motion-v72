@@ -1,0 +1,241 @@
+{
+  "slug": "bibliotecas",
+  "num": 6,
+  "menu": "Bibliotecas",
+  "titulo": "GSAP, D3, Three.js o Lottie: qué biblioteca para cada pieza",
+  "titulo_curto": "Qué biblioteca",
+  "minutos": 15,
+  "lead": "Cada tipo de movimiento tiene una biblioteca que lo resuelve en pocas líneas y otra que pelea contigo. La coreografía de texto es GSAP; el gráfico que nace de datos es D3 dibujando y GSAP animando; la escena 3D es Three.js; la animación lista de After Effects es Lottie. En esta lección eliges con la pregunta correcta y renderizas un gráfico y una escena 3D.",
+  "objetivo": "elegir la biblioteca correcta para cada pieza y renderizar un gráfico de datos con D3 y GSAP.",
+  "competencias": [
+    "escolher-biblioteca-por-tipo",
+    "animar-dado-com-d3-e-gsap",
+    "ligar-three-ao-tempo-do-motor"
+  ],
+  "aprende": [
+    {
+      "icone": "alvo",
+      "t": "La pregunta que elige la biblioteca: ¿qué tipo de movimiento es?"
+    },
+    {
+      "icone": "grafico",
+      "t": "D3 calcula la forma una vez; GSAP anima en el tiempo"
+    },
+    {
+      "icone": "camadas",
+      "t": "Three.js en HyperFrames: hf-seek y data-duration obligatorio"
+    },
+    {
+      "icone": "x",
+      "t": "El error que el lint detecta cuando falta la duración"
+    }
+  ],
+  "hero_alt": "Cuatro pantallas pequeñas lado a lado en una mesa de edición, con un gráfico de barras, una forma 3D, un ícono de líneas y un título.",
+  "secoes": [
+    {
+      "tipo": "diagrama",
+      "titulo": "¿Qué tipo de movimiento es?",
+      "sub": "Haz clic en cada salida. Varias pueden convivir en la misma composición.",
+      "nos": [
+        {
+          "icone": "relogio",
+          "titulo": "GSAP",
+          "sub": "coreografía",
+          "forte": true,
+          "detalhe": "Estándar de HyperFrames: texto que entra, elementos en orden, secuencia fija. Timeline, curvas y stagger. Si la duda persiste, empieza por aquí."
+        },
+        {
+          "icone": "grafico",
+          "titulo": "D3",
+          "sub": "datos",
+          "detalhe": "Escalas y ejes: transforma números en posiciones y tamaños. En el video, D3 dibuja el SVG una vez y GSAP anima las barras. D3 solo, con transiciones propias, no sigue el tiempo del motor."
+        },
+        {
+          "icone": "camadas",
+          "titulo": "Three.js",
+          "sub": "3D",
+          "detalhe": "Producto girando, cámara pasando por una escena. En HyperFrames, dibuja a partir del evento hf-seek y exige data-duration en la raíz. Se profundiza en el curso 5 (sitios cinematográficos)."
+        },
+        {
+          "icone": "play",
+          "titulo": "Lottie",
+          "sub": "listo",
+          "detalhe": "Animación que ya tiene su propia línea de tiempo (exportada de After Effects): ícono, personaje que camina. HyperFrames tiene un adaptador para ella."
+        },
+        {
+          "icone": "sol",
+          "titulo": "CSS",
+          "sub": "repetición",
+          "detalhe": "Brillo, pulso, motivo que se repite, sin JavaScript. Necesita duración finita en la raíz."
+        }
+      ],
+      "legenda": "Mapa según los adaptadores documentados en las skills de HyperFrames (GSAP, Lottie, Three.js, Anime.js, CSS, WAAPI, TypeGPU) al 19/10/2026."
+    },
+    {
+      "tipo": "codigo",
+      "titulo": "Datos con D3, movimiento con GSAP",
+      "sub": "Cuatro barras con datos de ejemplo. D3 calcula la escala y la posición; la timeline hace que las barras crezcan en secuencia.",
+      "blocos": [
+        {
+          "rot": "Archivo · kit/exemplos/a6-dados/index.html",
+          "icone": "arquivo",
+          "conteudo": "<!doctype html>\n<html lang=\"pt-BR\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=1920, height=1080\" />\n    <script src=\"https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js\"></script>\n    <script src=\"https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js\"></script>\n    <style>\n      * { margin: 0; padding: 0; box-sizing: border-box; }\n      html, body { width: 1920px; height: 1080px; overflow: hidden; background: #0c0c10; }\n      #root { width: 100%; height: 100%; position: relative; font-family: ui-sans-serif, system-ui, sans-serif; }\n      #titulo { position: absolute; left: 200px; top: 120px; color: #f4f4f5; font-size: 72px; font-weight: 700; line-height: 1.1; }\n      #nota { position: absolute; left: 200px; top: 220px; color: #a1a1aa; font-size: 36px; }\n      #grafico { position: absolute; left: 200px; top: 320px; }\n      .rotulo { fill: #a1a1aa; font-size: 34px; }\n      .valor { fill: #f4f4f5; font-size: 34px; font-weight: 700; }\n    </style>\n  </head>\n  <body>\n    <div id=\"root\" data-composition-id=\"main\" data-start=\"0\" data-duration=\"6\" data-width=\"1920\" data-height=\"1080\">\n      <h1 id=\"titulo\">Planos por cena</h1>\n      <p id=\"nota\">dados de exemplo, para o ensaio</p>\n      <svg id=\"grafico\" width=\"1520\" height=\"600\"></svg>\n    </div>\n    <script>\n      // D3 calcula la forma (escalas, posiciones) una vez; GSAP anima en el tiempo.\n      const dados = [\n        { cena: \"Abertura\", planos: 4 },\n        { cena: \"Conflito\", planos: 9 },\n        { cena: \"Virada\", planos: 6 },\n        { cena: \"Fecho\", planos: 3 },\n      ];\n      const svg = d3.select(\"#grafico\");\n      const x = d3.scaleLinear().domain([0, 10]).range([0, 1100]);\n      const y = d3.scaleBand().domain(dados.map((d) => d.cena)).range([0, 560]).padding(0.3);\n      const linha = svg.selectAll(\"g\").data(dados).join(\"g\").attr(\"transform\", (d) => `translate(0,${y(d.cena)})`);\n      linha.append(\"text\").attr(\"class\", \"rotulo\").attr(\"x\", 0).attr(\"y\", y.bandwidth() / 2 + 12).text((d) => d.cena);\n      linha.append(\"rect\").attr(\"class\", \"barra\").attr(\"x\", 260).attr(\"height\", y.bandwidth()).attr(\"width\", (d) => x(d.planos))\n        .attr(\"fill\", (d, i) => (i === 1 ? \"#e9b949\" : \"#3f3f47\"));\n      linha.append(\"text\").attr(\"class\", \"valor\").attr(\"x\", (d) => 260 + x(d.planos) + 20).attr(\"y\", y.bandwidth() / 2 + 12).text((d) => d.planos);\n\n      const tl = gsap.timeline({ paused: true });\n      tl.fromTo(\"#titulo\", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: \"power3.out\" }, 0.2);\n      tl.fromTo(\"#nota\", { opacity: 0 }, { opacity: 1, duration: 0.4 }, 0.6);\n      tl.fromTo(\".rotulo\", { opacity: 0 }, { opacity: 1, duration: 0.4, stagger: 0.1 }, 0.8);\n      tl.fromTo(\".barra\", { scaleX: 0, transformOrigin: \"0% 50%\" }, { scaleX: 1, duration: 0.9, ease: \"power2.out\", stagger: 0.25 }, 1.2);\n      tl.fromTo(\".valor\", { opacity: 0 }, { opacity: 1, duration: 0.3, stagger: 0.25 }, 1.9);\n      window.__timelines[\"main\"] = tl;\n    </script>\n  </body>\n</html>"
+        },
+        {
+          "rot": "Terminal · check, render y verificar",
+          "icone": "play",
+          "conteudo": "K=~/projetos/formacao-cinema-ia-motion-v72/kit\nexport HYPERFRAMES_NO_TELEMETRY=1 NO_COLOR=1\nE=${TMPDIR:-/tmp}/ensaio-motion/a6; rm -rf \"$E\"; mkdir -p \"$E\"\ncp -r \"$K/exemplos/a6-dados\" \"$E/dados\"; cd \"$E/dados\"\nnpx -y hyperframes@0.8.176 check 2>&1 | grep -E \"Check passed|✗\"\nnpx -y hyperframes@0.8.176 render --quality draft --workers 2 --quiet --output dados.mp4 > render.log 2>&1\necho \"render: $?\"\npython3 \"$K/conferir.py\" dados.mp4 6 1920x1080; echo \"saída: $?\""
+        }
+      ],
+      "saida": {
+        "selo": "real",
+        "abas": [
+          {
+            "rot": "Salida capturada (19/10/2026)",
+            "html": "<pre>◇  Check passed\nrender: 0\nOK: 6,0 s · 1920×1080 · 30 fps · sem áudio\nsaída: 0</pre><p>Las dos bibliotecas vienen del CDN con versión fija (gsap@3.14.2, d3@7.9.0): el render las busca al abrir la página, antes del primer fotograma.</p>"
+          },
+          {
+            "rot": "Error común: medir en el momento de animar",
+            "html": "<p>Calcular la posición con getBoundingClientRect dentro de la animación da valores distintos según el fotograma que se pida, porque el motor renderiza en paralelo. Calcula todo una sola vez, en el montaje, como hace el ejemplo con las escalas de D3.</p>"
+          }
+        ]
+      }
+    },
+    {
+      "tipo": "codigo",
+      "titulo": "Three.js atado al tiempo del motor",
+      "sub": "Una forma girando. La rotación viene del tiempo del evento hf-seek, nunca del reloj. El ensayo quita la duración de la raíz para ver el error y después renderiza la versión correcta.",
+      "blocos": [
+        {
+          "rot": "Archivo · kit/exemplos/a6-three/index.html",
+          "icone": "arquivo",
+          "conteudo": "<!doctype html>\n<html lang=\"pt-BR\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=1920, height=1080\" />\n    <style>\n      * { margin: 0; padding: 0; box-sizing: border-box; }\n      html, body { width: 1920px; height: 1080px; overflow: hidden; background: #0c0c10; }\n      #root { width: 100%; height: 100%; position: relative; }\n      #cena3d { position: absolute; inset: 0; width: 1920px; height: 1080px; }\n    </style>\n  </head>\n  <body>\n    <div id=\"root\" data-composition-id=\"main\" data-no-timeline data-start=\"0\" data-duration=\"4\" data-width=\"1920\" data-height=\"1080\">\n      <canvas id=\"cena3d\"></canvas>\n    </div>\n    <script type=\"module\">\n      // Three.js en HyperFrames: el fotograma viene del tiempo que manda HyperFrames (hf-seek), nunca del reloj.\n      import * as THREE from \"https://cdn.jsdelivr.net/npm/three@0.181.2/+esm\";\n      const canvas = document.getElementById(\"cena3d\");\n      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });\n      renderer.setSize(1920, 1080, false);\n      renderer.setPixelRatio(1);\n      const scene = new THREE.Scene();\n      scene.background = new THREE.Color(0x0c0c10);\n      const camera = new THREE.PerspectiveCamera(35, 1920 / 1080, 0.1, 100);\n      camera.position.set(0, 0, 6);\n      const forma = new THREE.Mesh(\n        new THREE.IcosahedronGeometry(1.4, 1),\n        new THREE.MeshStandardMaterial({ color: 0xd4d4d8, roughness: 0.4, flatShading: true })\n      );\n      scene.add(forma);\n      scene.add(new THREE.AmbientLight(0xffffff, 0.4));\n      const luz = new THREE.DirectionalLight(0xffffff, 2);\n      luz.position.set(3, 4, 5);\n      scene.add(luz);\n      function desenha(t) {\n        forma.rotation.y = t * 0.8;\n        forma.rotation.x = t * 0.3;\n        renderer.render(scene, camera);\n      }\n      window.addEventListener(\"hf-seek\", (e) => desenha(e.detail.time));\n      desenha(window.__hfThreeTime || 0);\n    </script>\n  </body>\n</html>"
+        },
+        {
+          "rot": "Terminal · lint sin y con duración, render y verificar",
+          "icone": "lupa",
+          "conteudo": "K=~/projetos/formacao-cinema-ia-motion-v72/kit\nexport HYPERFRAMES_NO_TELEMETRY=1 NO_COLOR=1\nE=${TMPDIR:-/tmp}/ensaio-motion/a6; mkdir -p \"$E\"\nrm -rf \"$E/three\"; cp -r \"$K/exemplos/a6-three\" \"$E/three\"; cd \"$E/three\"\nsed -i 's/ data-duration=\"4\"//' index.html   # el error común: raíz sin duración\necho \"## sem data-duration\"; npx -y hyperframes@0.8.176 lint 2>&1 | grep -oE \"root_composition_missing_duration_source|[0-9]+ errors?.*\"\ncp \"$K/exemplos/a6-three/index.html\" index.html\necho \"## com data-duration\"; npx -y hyperframes@0.8.176 lint 2>&1 | grep -oE \"root_composition_missing_duration_source|[0-9]+ errors?.*\"\nnpx -y hyperframes@0.8.176 render --quality draft --workers 1 --quiet --output three.mp4 > render.log 2>&1\npython3 \"$K/conferir.py\" three.mp4 4 1920x1080; echo \"saída: $?\""
+        }
+      ],
+      "saida": {
+        "selo": "real",
+        "abas": [
+          {
+            "rot": "Salida capturada (19/10/2026)",
+            "html": "<pre>## sem data-duration\nroot_composition_missing_duration_source\n1 error(s), 0 warning(s)\n## com data-duration\n0 errors, 0 warnings\nOK: 4,0 s · 1920×1080 · 30 fps · sem áudio\nsaída: 0</pre><p>Sin GSAP, la raíz lleva data-no-timeline: en la 0.8.176 el lint pide el registro en window.__timelines y acepta ese atributo como \"no tengo timeline\" (hallazgo en el código del lint el 19/10/2026). La documentación del skill menciona el atributo para composición estática; aquí la escena se mueve por el hf-seek, no por una timeline.</p>"
+          }
+        ]
+      }
+    },
+    {
+      "tipo": "pratica",
+      "titulo": "Práctica",
+      "sub": "Dos ensayos y la elección para tus piezas.",
+      "exercicios": [
+        {
+          "id": "e1",
+          "titulo": "E1 · Gráfico animado",
+          "min": "10 min",
+          "texto": "Ejecuta el bloque del gráfico.",
+          "pronto": "<code>◇  Check passed</code>, <code>render: 0</code> y <code>OK: 6,0 s · 1920×1080 · 30 fps · sem áudio</code> con <code>saída: 0</code>."
+        },
+        {
+          "id": "e2",
+          "titulo": "E2 · 3D sin y con duración",
+          "min": "10 min",
+          "texto": "Ejecuta el bloque de Three.js.",
+          "pronto": "Sin duración: <code>root_composition_missing_duration_source</code> y <code>1 error(s)</code>; con duración: <code>0 errors, 0 warnings</code> y <code>OK: 4,0 s · 1920×1080 · 30 fps · sem áudio</code>."
+        },
+        {
+          "id": "e3",
+          "titulo": "E3 · Tus datos",
+          "min": "15 min",
+          "texto": "En la copia /tmp/ensaio-motion/a6/dados, cambia la lista dados por cuatro números tuyos (y el título), ejecuta check y render de nuevo.",
+          "pronto": "<code>python3 ~/projetos/formacao-cinema-ia-motion-v72/kit/conferir.py dados.mp4 6 1920x1080; echo \"saída: $?\"</code> → <code>OK: 6,0 s</code> al comienzo de la línea y <code>saída: 0</code>."
+        }
+      ]
+    },
+    {
+      "tipo": "quiz",
+      "titulo": "Prueba de la clase",
+      "sub": "La explicación aparece después de tu respuesta.",
+      "perguntas": [
+        {
+          "p": "Un gráfico de ventas por mes, con barras que crecen una tras otra. ¿Qué combinación?",
+          "opcoes": [
+            "Three.js para las barras y CSS para el texto del título.",
+            "Un Lottie exportado de After Effects con los números.",
+            "D3 calcula las barras y GSAP anima.",
+            "Solo CSS, con animation-delay distinto en cada barra."
+          ],
+          "certa": 2,
+          "explica": "D3 resuelve datos en forma (escala, eje); GSAP resuelve el orden en el tiempo, siguiendo el reloj del motor. CSS sí anima, pero la escala la harías a mano.",
+          "ref": "diagrama"
+        },
+        {
+          "p": "¿Por qué la composición Three.js necesita data-duration en la raíz?",
+          "opcoes": [
+            "El adaptador no descubre solo la duración de la escena.",
+            "Porque Three.js solo logra renderizar a 60 fps.",
+            "Porque sin la duración la escena 3D sale sin ninguna luz.",
+            "Porque el lint exige duración en toda composición."
+          ],
+          "certa": 0,
+          "explica": "Con GSAP el motor puede inferir la duración por la timeline; con Three.js no hay nada que medir. El lint avisa con root_composition_missing_duration_source.",
+          "ref": "codigo"
+        },
+        {
+          "p": "¿De dónde saca la escena 3D el ángulo de cada fotograma?",
+          "opcoes": [
+            "Del requestAnimationFrame del propio navegador.",
+            "De Date.now() dividido por mil a cada fotograma.",
+            "De un contador que suma uno a cada fotograma dibujado.",
+            "Del tiempo del evento hf-seek."
+          ],
+          "certa": 3,
+          "explica": "El motor pide fotogramas fuera de orden y en paralelo; solo el tiempo que él manda es confiable. Un contador y un reloj rompen el determinismo de la lección 1.",
+          "ref": "codigo"
+        }
+      ]
+    },
+    {
+      "tipo": "resumo",
+      "titulo": "En tres frases",
+      "itens": [
+        {
+          "t": "Pregunta",
+          "texto": "Coreografía, datos, 3D, animación lista o repetición: el tipo elige la biblioteca."
+        },
+        {
+          "t": "Combinación",
+          "texto": "D3 calcula una vez, GSAP anima; Three.js dibuja por el hf-seek."
+        },
+        {
+          "t": "Duración",
+          "texto": "Sin timeline de GSAP, la raíz necesita data-duration."
+        }
+      ]
+    },
+    {
+      "tipo": "links",
+      "titulo": "Para ir más allá",
+      "links": [
+        {
+          "t": "Curso 5 de la formación: sitios cinematográficos (Three.js a fondo)",
+          "href": "https://inematds.github.io/formacao-cinema-ia-sites-v72/es/",
+          "icone": "camadas"
+        },
+        {
+          "t": "D3: documentación oficial",
+          "href": "https://d3js.org/",
+          "icone": "grafico"
+        },
+        {
+          "t": "Three.js: documentación oficial",
+          "href": "https://threejs.org/docs/",
+          "icone": "arquivo"
+        }
+      ]
+    }
+  ]
+}

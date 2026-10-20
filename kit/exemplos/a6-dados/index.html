@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: #0c0c10; }
+      #root { width: 100%; height: 100%; position: relative; font-family: ui-sans-serif, system-ui, sans-serif; }
+      #titulo { position: absolute; left: 200px; top: 120px; color: #f4f4f5; font-size: 72px; font-weight: 700; line-height: 1.1; }
+      #nota { position: absolute; left: 200px; top: 220px; color: #a1a1aa; font-size: 36px; }
+      #grafico { position: absolute; left: 200px; top: 320px; }
+      .rotulo { fill: #a1a1aa; font-size: 34px; }
+      .valor { fill: #f4f4f5; font-size: 34px; font-weight: 700; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="6" data-width="1920" data-height="1080">
+      <h1 id="titulo">Planos por cena</h1>
+      <p id="nota">dados de exemplo, para o ensaio</p>
+      <svg id="grafico" width="1520" height="600"></svg>
+    </div>
+    <script>
+      // D3 calcula a forma (escalas, posições) uma vez; o GSAP anima no tempo.
+      const dados = [
+        { cena: "Abertura", planos: 4 },
+        { cena: "Conflito", planos: 9 },
+        { cena: "Virada", planos: 6 },
+        { cena: "Fecho", planos: 3 },
+      ];
+      const svg = d3.select("#grafico");
+      const x = d3.scaleLinear().domain([0, 10]).range([0, 1100]);
+      const y = d3.scaleBand().domain(dados.map((d) => d.cena)).range([0, 560]).padding(0.3);
+      const linha = svg.selectAll("g").data(dados).join("g").attr("transform", (d) => `translate(0,${y(d.cena)})`);
+      linha.append("text").attr("class", "rotulo").attr("x", 0).attr("y", y.bandwidth() / 2 + 12).text((d) => d.cena);
+      linha.append("rect").attr("class", "barra").attr("x", 260).attr("height", y.bandwidth()).attr("width", (d) => x(d.planos))
+        .attr("fill", (d, i) => (i === 1 ? "#e9b949" : "#3f3f47"));
+      linha.append("text").attr("class", "valor").attr("x", (d) => 260 + x(d.planos) + 20).attr("y", y.bandwidth() / 2 + 12).text((d) => d.planos);
+
+      const tl = gsap.timeline({ paused: true });
+      tl.fromTo("#titulo", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" }, 0.2);
+      tl.fromTo("#nota", { opacity: 0 }, { opacity: 1, duration: 0.4 }, 0.6);
+      tl.fromTo(".rotulo", { opacity: 0 }, { opacity: 1, duration: 0.4, stagger: 0.1 }, 0.8);
+      tl.fromTo(".barra", { scaleX: 0, transformOrigin: "0% 50%" }, { scaleX: 1, duration: 0.9, ease: "power2.out", stagger: 0.25 }, 1.2);
+      tl.fromTo(".valor", { opacity: 0 }, { opacity: 1, duration: 0.3, stagger: 0.25 }, 1.9);
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

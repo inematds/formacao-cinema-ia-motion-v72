@@ -1,0 +1,291 @@
+{
+  "slug": "codigo",
+  "num": 1,
+  "menu": "Código",
+  "titulo": "El video es código: composición con tiempo y render determinista",
+  "titulo_curto": "El video es código",
+  "minutos": 15,
+  "lead": "En el motion por código, el video es una página que sabe dibujar cualquier instante. Un navegador sin pantalla pide el fotograma 0, el 1, el 2, y FFmpeg junta todo en un MP4. Si la misma entrada da siempre los mismos fotogramas, puedes rehacer, corregir y versionar el video como código. En esta lección lo compruebas en tu máquina.",
+  "objetivo": "comprobar en tu máquina que la misma composición da los mismos fotogramas y encontrar lo que lo rompe.",
+  "competencias": [
+    "modelo-mental-composicao-tempo-render",
+    "provar-determinismo",
+    "achar-fonte-de-acaso"
+  ],
+  "aprende": [
+    {
+      "icone": "camadas",
+      "t": "Las cuatro piezas: composición, reloj, navegador sin pantalla y codificador"
+    },
+    {
+      "icone": "lupa",
+      "t": "Comparar dos renders fotograma a fotograma con un comando"
+    },
+    {
+      "icone": "x",
+      "t": "Por qué Math.random y Date.now rompen el video"
+    },
+    {
+      "icone": "check",
+      "t": "Sorteo con semilla: variedad sin perder la repetición"
+    }
+  ],
+  "hero_alt": "Tira de película sobre una mesa de luz fría, con un círculo blanco que crece de fotograma en fotograma.",
+  "secoes": [
+    {
+      "tipo": "diagrama",
+      "titulo": "Del código al MP4",
+      "sub": "Haz clic en cada pieza. HyperFrames (HTML) y Remotion (React) siguen el mismo diseño.",
+      "nos": [
+        {
+          "icone": "arquivo",
+          "titulo": "Composición",
+          "sub": "HTML o React",
+          "detalhe": "Un archivo que describe lo que hay en pantalla y cómo cambia con el tiempo. En HyperFrames es un index.html con atributos data-*; en Remotion, un componente React. Es texto: cabe en git y el agente lo edita.",
+          "itens": [
+            {
+              "icone": "arquivo",
+              "t": "index.html",
+              "sub": "HyperFrames"
+            },
+            {
+              "icone": "arquivo",
+              "t": "index.tsx",
+              "sub": "Remotion"
+            }
+          ]
+        },
+        {
+          "icone": "relogio",
+          "titulo": "Reloj",
+          "sub": "t o fotograma",
+          "detalhe": "El motor no deja que la animación corra sola: pide un instante exacto (2,5 s, o el fotograma 75 a 30 fps) y la composición dibuja ese instante. Por eso se puede saltar a cualquier punto."
+        },
+        {
+          "icone": "chip",
+          "titulo": "Navegador",
+          "sub": "sin pantalla",
+          "detalhe": "Un Chrome sin ventana abre la composición, va al instante pedido y toma la foto del fotograma. En el primer uso HyperFrames descarga ese navegador (unos 240 MB al 19/10/2026)."
+        },
+        {
+          "icone": "video",
+          "titulo": "Codificador",
+          "sub": "FFmpeg",
+          "detalhe": "FFmpeg junta las fotos en orden y graba el MP4 (H.264). Si las fotos son iguales, el archivo final también lo es.",
+          "forte": true
+        }
+      ],
+      "volta": "misma entrada → mismos fotogramas",
+      "legenda": "Determinístico = correr dos veces en el mismo entorno y obtener los mismos fotogramas. Es lo que permite corregir un detalle sin rehacer todo lo demás.",
+      "dica": "Entre máquinas distintas, la GPU y las fuentes pueden cambiar algunos píxeles; para repetir en otra máquina, el render de la 0.8.176 tiene --docker (\"deterministic render\") y --no-browser-gpu."
+    },
+    {
+      "tipo": "passos",
+      "titulo": "Lo que rompe la repetición",
+      "sub": "Tres fuentes de azar que el lint de HyperFrames detecta.",
+      "passos": [
+        {
+          "titulo": "Sorteo",
+          "sub": "Math.random",
+          "texto": [
+            "Cada render sortea de nuevo: los mismos 12 puntos nacen en lugares distintos.",
+            "El reemplazo es un sorteo con semilla (mulberry32): la misma semilla da los mismos números, siempre."
+          ],
+          "exemplo": {
+            "rot": "Reemplazo",
+            "texto": "const sorteio = mulberry32(42); luego sorteio() en lugar de Math.random()."
+          }
+        },
+        {
+          "titulo": "Reloj de la máquina",
+          "sub": "Date.now",
+          "texto": [
+            "La hora actual cambia en cada render y en cada fotograma.",
+            "Todo lo que anima debe venir del tiempo que entrega el motor, nunca del reloj de la computadora."
+          ]
+        },
+        {
+          "titulo": "Red en el momento",
+          "sub": "fetch",
+          "texto": [
+            "Buscar datos en internet durante el render puede traer otra respuesta o fallar a la mitad.",
+            "Búscalos antes, guárdalos en un archivo de la carpeta y léelos desde ahí (la lección 7 hace esto con los subtítulos)."
+          ]
+        }
+      ]
+    },
+    {
+      "tipo": "codigo",
+      "titulo": "El ensayo: dos renders, comparados fotograma a fotograma",
+      "sub": "Dos composiciones casi iguales: una usa Math.random, la otra un sorteo con semilla. Cada una se renderiza dos veces y se compara por el hash de cada fotograma.",
+      "blocos": [
+        {
+          "rot": "Git · clonar el curso (una vez)",
+          "icone": "git",
+          "conteudo": "git clone https://github.com/inematds/formacao-cinema-ia-motion-v72 ~/projetos/formacao-cinema-ia-motion-v72"
+        },
+        {
+          "rot": "Terminal · dos renders de cada uno y la comparación",
+          "icone": "play",
+          "conteudo": "K=~/projetos/formacao-cinema-ia-motion-v72/kit\nexport HYPERFRAMES_NO_TELEMETRY=1\nE=${TMPDIR:-/tmp}/ensaio-motion/a1; rm -rf \"$E\"; mkdir -p \"$E\"\nfor ex in a1-sorteio a1-semente; do\n  cp -r \"$K/exemplos/$ex\" \"$E/$ex\"; cd \"$E/$ex\"\n  for n in 1 2; do\n    npx -y hyperframes@0.8.176 render --quality draft --workers 1 --quiet --output \"render-$n.mp4\" > /dev/null 2>&1\n  done\n  echo \"## $ex\"; bash \"$K/comparar-quadros.sh\" render-1.mp4 render-2.mp4; echo \"saída: $?\"\ndone"
+        }
+      ],
+      "saida": {
+        "selo": "real",
+        "abas": [
+          {
+            "rot": "Salida capturada (19/10/2026)",
+            "html": "<pre>## a1-sorteio\nDIFEREM: 89 de 90 quadros\nsaída: 1\n## a1-semente\nIGUAIS: 90/90 quadros\nsaída: 0</pre><p>Son 90 fotogramas (3 s a 30 fps). Con Math.random solo coincide el primero; con la semilla, los 90. El primer render descarga hyperframes@0.8.176 y el navegador, por eso tarda más.</p>"
+          },
+          {
+            "rot": "Error común: comparar el archivo completo",
+            "html": "<p>Comparar el MP4 con <code>md5sum</code> puede dar distinto aunque los fotogramas sean iguales (metadatos del archivo). El <code>comparar-quadros.sh</code> decodifica y compara la imagen de cada fotograma con <code>ffmpeg -f framemd5</code>.</p>"
+          }
+        ]
+      }
+    },
+    {
+      "tipo": "codigo",
+      "titulo": "El lint encuentra el azar antes del render",
+      "sub": "El mismo par de composiciones pasado por el lint de HyperFrames. Señala la línea y sugiere la semilla.",
+      "blocos": [
+        {
+          "rot": "Terminal · lint de las dos composiciones",
+          "icone": "lupa",
+          "conteudo": "K=~/projetos/formacao-cinema-ia-motion-v72/kit\nexport HYPERFRAMES_NO_TELEMETRY=1 NO_COLOR=1\nfor ex in a1-sorteio a1-semente; do\n  cd \"$K/exemplos/$ex\"\n  npx -y hyperframes@0.8.176 lint; echo \"saída: $?\"\ndone"
+        }
+      ],
+      "saida": {
+        "selo": "real",
+        "abas": [
+          {
+            "rot": "Salida capturada (19/10/2026)",
+            "html": "<pre>◆  Linting a1-sorteio/index.html\n\n  ✗ [~/projetos/formacao-cinema-ia-motion-v72/kit/exemplos/a1-sorteio/index.html:24:24] non_deterministic_code: Script contains `Math.random()` which produces non-deterministic output. Renders may differ between frames or runs.\n    Fix: Use a seeded PRNG (e.g. a simple mulberry32) so renders are deterministic across frames.\n\n◇  1 error(s), 0 warning(s)\nsaída: 1\n◆  Linting a1-semente/index.html\n\n◇  0 errors, 0 warnings\nsaída: 0</pre><p>El lint sale con código 1 cuando encuentra un error: puedes usarlo como compuerta antes de cualquier render.</p>"
+          }
+        ]
+      }
+    },
+    {
+      "tipo": "pratica",
+      "titulo": "Práctica",
+      "sub": "Ensayo, lint y tu semilla.",
+      "exercicios": [
+        {
+          "id": "e1",
+          "titulo": "E1 · Ver el azar y la semilla",
+          "min": "10 min",
+          "texto": "Clona el curso en ~/projetos y ejecuta el bloque \"dos renders de cada uno y la comparación\".",
+          "pronto": "a1-sorteio termina en <code>DIFEREM: 89 de 90 quadros</code> y <code>saída: 1</code>; a1-semente en <code>IGUAIS: 90/90 quadros</code> y <code>saída: 0</code>. (En tu computadora el número de fotogramas distintos puede variar; lo que no puede pasar es que la semilla dé distinto.)"
+        },
+        {
+          "id": "e2",
+          "titulo": "E2 · El lint como compuerta",
+          "min": "5 min",
+          "texto": "Ejecuta el bloque del lint.",
+          "pronto": "a1-sorteio muestra <code>non_deterministic_code</code> y <code>saída: 1</code>; a1-semente muestra <code>0 errors, 0 warnings</code> y <code>saída: 0</code>."
+        },
+        {
+          "id": "e3",
+          "titulo": "E3 · Otra semilla, misma garantía",
+          "min": "10 min",
+          "texto": "En /tmp/ensaio-motion/a1/a1-semente, cambia mulberry32(42) por mulberry32(7), renderiza dos veces (render-3.mp4 y render-4.mp4, con el mismo comando del bloque) y compara: 3 con 4, después 1 con 3.",
+          "pronto": "<code>bash ~/projetos/formacao-cinema-ia-motion-v72/kit/comparar-quadros.sh render-3.mp4 render-4.mp4</code> → <code>IGUAIS: 90/90 quadros</code>; lo mismo con <code>render-1.mp4 render-3.mp4</code> → empieza con <code>DIFEREM:</code>."
+        }
+      ]
+    },
+    {
+      "tipo": "quiz",
+      "titulo": "Prueba de la clase",
+      "sub": "La explicación aparece después de tu respuesta.",
+      "perguntas": [
+        {
+          "p": "¿Quién decide qué instante dibuja la composición?",
+          "opcoes": [
+            "El motor de render, que pide un tiempo exacto en cada fotograma.",
+            "El navegador, dibujando a la velocidad que logre la máquina.",
+            "FFmpeg, que elige los fotogramas al unir el MP4.",
+            "La tarjeta de video, según la carga del computador."
+          ],
+          "certa": 0,
+          "explica": "El motor pide el instante (2,5 s, fotograma 75) y la composición dibuja ese instante. Por eso la velocidad no cambia el resultado: en el mismo entorno, una máquina lenta tarda más, pero da los mismos fotogramas.",
+          "ref": "diagrama"
+        },
+        {
+          "p": "Dos renders de la misma composición dieron 89 de 90 fotogramas distintos. ¿Qué buscar primero?",
+          "opcoes": [
+            "Un codificador diferente entre los dos renders.",
+            "Math.random, Date.now o una consulta a la red dentro de la composición.",
+            "Falta de memoria en el segundo render.",
+            "Una fuente que no cargó a tiempo."
+          ],
+          "certa": 1,
+          "explica": "El azar dentro de la composición es la causa más común, y el lint señala Math.random con la línea. Los dos renders usaron el mismo hyperframes@0.8.176 y el mismo FFmpeg: lo que cambió fue la entrada.",
+          "ref": "passos"
+        },
+        {
+          "p": "¿Para qué sirve el sorteo con semilla?",
+          "opcoes": [
+            "Para que el render sea más rápido en una máquina lenta.",
+            "Para que el lint deje de quejarse sin cambiar nada en el resultado.",
+            "Para que la variedad se repita igual en cada render.",
+            "Para que cada render salga con una versión nueva y distinta."
+          ],
+          "certa": 2,
+          "explica": "La semilla fija la secuencia de números: los puntos siguen esparcidos, pero siempre en los mismos lugares. Cambiar la semilla cambia el dibujo a propósito, y de nuevo de forma repetible.",
+          "ref": "codigo"
+        },
+        {
+          "p": "¿Por qué comparar fotograma a fotograma y no el MP4 completo?",
+          "opcoes": [
+            "Porque md5sum no puede leer archivos MP4 grandes.",
+            "Porque comparar fotogramas es mucho más rápido que leer el archivo.",
+            "Porque FFmpeg solo sabe generar el hash de un fotograma, no de un archivo.",
+            "Porque los metadatos cambian el archivo aunque las imágenes sean iguales."
+          ],
+          "certa": 3,
+          "explica": "Lo que importa es la imagen. framemd5 decodifica cada fotograma y compara los píxeles; el hash del archivo completo también cambia con metadatos que no aparecen en la pantalla.",
+          "ref": "codigo"
+        }
+      ]
+    },
+    {
+      "tipo": "resumo",
+      "titulo": "En tres frases",
+      "itens": [
+        {
+          "t": "Composición + reloj",
+          "texto": "El video es una página que dibuja cualquier instante que el motor pida."
+        },
+        {
+          "t": "Determinismo",
+          "texto": "Misma entrada, mismos fotogramas: es lo que permite corregir un detalle sin rehacer el resto."
+        },
+        {
+          "t": "Azar controlado",
+          "texto": "Sorteo con semilla, tiempo del motor y datos guardados en la carpeta; el lint vigila."
+        }
+      ]
+    },
+    {
+      "tipo": "links",
+      "titulo": "Para ir más allá",
+      "links": [
+        {
+          "t": "HyperFrames en GitHub (código y licencia Apache-2.0)",
+          "href": "https://github.com/heygen-com/hyperframes",
+          "icone": "git"
+        },
+        {
+          "t": "Remotion: documentación oficial",
+          "href": "https://www.remotion.dev/docs/",
+          "icone": "arquivo"
+        },
+        {
+          "t": "Curso 0 de la formación: Dirección (plano, cámara y luz)",
+          "href": "https://inematds.github.io/formacao-cinema-ia-direcao-v72/es/",
+          "icone": "video"
+        }
+      ]
+    }
+  ]
+}

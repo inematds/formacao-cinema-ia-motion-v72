@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <link rel="stylesheet" href="abertura.css" />
+    <style>html, body { width: 1920px; height: 1080px; }</style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="15" data-width="1920" data-height="1080">
+      <div id="luz"></div>
+      <div id="bloco">
+        <p id="rotulo">Formação Cinema com IA</p>
+        <h1 id="titulo">Motion por&nbsp;código</h1>
+        <p id="apoio">HyperFrames e Remotion, do terminal ao&nbsp;MP4</p>
+      </div>
+      <div id="trilho"></div>
+      <div id="cabeca"></div>
+    </div>
+    <script src="abertura.js"></script>
+    <script>window.__timelines["main"] = window.criaAbertura();</script>
+  </body>
+</html>

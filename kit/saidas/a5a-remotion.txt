@@ -1,0 +1,4 @@
+npm: 0
+render: 0
+OK: 5,0 s · 1920×1080 · 30 fps · sem áudio
+saída: 0

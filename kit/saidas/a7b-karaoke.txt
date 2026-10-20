@@ -1,0 +1,5 @@
+palavras: 14 · legendas: 5
+◇  Check passed
+render: 0
+OK: 8,0 s · 1920×1080 · 30 fps · com áudio
+saída: 0

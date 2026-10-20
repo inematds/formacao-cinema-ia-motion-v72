@@ -1,0 +1,6 @@
+## a1-sorteio
+DIFEREM: 89 de 90 quadros
+saída: 1
+## a1-semente
+IGUAIS: 90/90 quadros
+saída: 0

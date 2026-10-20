@@ -1,0 +1,264 @@
+{
+  "slug": "hyperframes",
+  "num": 2,
+  "menu": "HyperFrames",
+  "titulo": "HyperFrames do zero: HTML com data-* vira MP4",
+  "titulo_curto": "HyperFrames do zero",
+  "minutos": 15,
+  "lead": "HyperFrames é um motor aberto do HeyGen que renderiza HTML em vídeo. Três atributos dizem o tamanho e a duração, uma timeline GSAP pausada diz o movimento, e o check confere tudo antes do render. Nesta aula você cria o projeto, escreve a primeira composição e sai com um MP4 conferido.",
+  "objetivo": "criar um projeto HyperFrames, escrever a composição com data-* e renderizar um MP4 que passa no conferidor.",
+  "competencias": [
+    "criar-projeto-hyperframes",
+    "escrever-composicao-data",
+    "conferir-antes-do-render"
+  ],
+  "aprende": [
+    {
+      "icone": "pasta",
+      "t": "O que o init cria e por que a versão fica fixa no package.json"
+    },
+    {
+      "icone": "arquivo",
+      "t": "A raiz com data-composition-id, data-width, data-height e data-duration"
+    },
+    {
+      "icone": "relogio",
+      "t": "A timeline GSAP pausada registrada em window.__timelines"
+    },
+    {
+      "icone": "check",
+      "t": "check, render e o conferidor do kit"
+    }
+  ],
+  "hero_alt": "Notebook aberto numa mesa escura mostrando um quadro de vídeo escuro, com um monitor de referência ao lado.",
+  "secoes": [
+    {
+      "tipo": "diagrama",
+      "titulo": "O caminho de um projeto",
+      "sub": "Clique em cada etapa.",
+      "nos": [
+        {
+          "icone": "terminal",
+          "titulo": "init",
+          "sub": "cria a pasta",
+          "detalhe": "npx hyperframes@0.8.176 init cria index.html, package.json (com a versão fixa nos scripts), hyperframes.json e um AGENTS.md/CLAUDE.md com as regras para o agente."
+        },
+        {
+          "icone": "arquivo",
+          "titulo": "index.html",
+          "sub": "data-*",
+          "detalhe": "A raiz leva data-composition-id, data-width, data-height e data-duration (em segundos). Elemento com data-start vira um clipe que aparece só no seu intervalo."
+        },
+        {
+          "icone": "relogio",
+          "titulo": "Timeline",
+          "sub": "GSAP pausada",
+          "detalhe": "Uma única gsap.timeline({ paused: true }) registrada em window.__timelines[\"main\"], com a mesma chave do data-composition-id. O motor move essa timeline até cada instante."
+        },
+        {
+          "icone": "portao",
+          "titulo": "check",
+          "sub": "portão",
+          "detalhe": "Roda o lint e abre a composição num navegador: erros de execução, texto fora do quadro, movimento e contraste. Só renderize com Check passed."
+        },
+        {
+          "icone": "video",
+          "titulo": "render",
+          "sub": "MP4",
+          "forte": true,
+          "detalhe": "--quality draft para testar, looks (padrão) e delivery para entregar. --workers limita quantos Chrome rodam juntos."
+        }
+      ],
+      "legenda": "Quando a raiz tem data-duration, é ela que manda: uma timeline mais curta segura o último quadro."
+    },
+    {
+      "tipo": "codigo",
+      "titulo": "Criar o projeto",
+      "sub": "O init sem perguntas (--non-interactive) e a telemetria desligada antes de tudo.",
+      "blocos": [
+        {
+          "rot": "Terminal · criar o projeto e ver o que veio",
+          "icone": "terminal",
+          "conteudo": "export HYPERFRAMES_NO_TELEMETRY=1 NO_COLOR=1\nE=${TMPDIR:-/tmp}/ensaio-motion/a2; rm -rf \"$E\"; mkdir -p \"$E\"; cd \"$E\"\nnpx -y hyperframes@0.8.176 init minha-abertura --non-interactive > init.log 2>&1; echo \"saída: $?\"\nls minha-abertura\ngrep '\"render\"' minha-abertura/package.json\nnpx -y hyperframes@0.8.176 telemetry status | head -2"
+        }
+      ],
+      "saida": {
+        "selo": "real",
+        "abas": [
+          {
+            "rot": "Saída capturada (19/10/2026)",
+            "html": "<pre>saída: 0\nAGENTS.md\nCLAUDE.md\nhyperframes.json\nindex.html\nmeta.json\npackage.json\n    \"render\": \"npx --yes hyperframes@0.8.176 render\",\n\n  Status:     disabled</pre><p>O script render do package.json já chama a versão exata. A telemetria aparece desligada porque o bloco exportou HYPERFRAMES_NO_TELEMETRY=1.</p>"
+          },
+          {
+            "rot": "Por que desligar a telemetria",
+            "html": "<p>Por padrão o CLI envia dados anônimos de uso. O <code>telemetry status</code> do 0.8.176 mostra como desligar: <code>hyperframes telemetry disable</code> (fica gravado) ou as variáveis <code>HYPERFRAMES_NO_TELEMETRY=1</code> ou <code>DO_NOT_TRACK=1</code> (só na sessão). Os blocos do curso usam a variável.</p>"
+          }
+        ]
+      }
+    },
+    {
+      "tipo": "codigo",
+      "titulo": "A primeira composição",
+      "sub": "Título, filete e subtítulo entrando em ordem. Copie por cima do index.html do init.",
+      "blocos": [
+        {
+          "rot": "Arquivo · kit/exemplos/a2-ola/index.html",
+          "icone": "arquivo",
+          "conteudo": "<!doctype html>\n<html lang=\"pt-BR\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=1920, height=1080\" />\n    <script src=\"https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js\"></script>\n    <style>\n      * { margin: 0; padding: 0; box-sizing: border-box; }\n      html, body { width: 1920px; height: 1080px; overflow: hidden; background: #0c0c10; }\n      #root { width: 100%; height: 100%; position: relative; font-family: ui-sans-serif, system-ui, sans-serif; }\n      #cena { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; padding-left: 200px; }\n      #titulo { color: #f4f4f5; font-size: 120px; font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; }\n      #linha { width: 640px; height: 6px; margin: 36px 0; background: #e9b949; transform-origin: left center; }\n      #sub { color: #a1a1aa; font-size: 48px; line-height: 1.2; }\n    </style>\n  </head>\n  <body>\n    <div id=\"root\" data-composition-id=\"main\" data-start=\"0\" data-duration=\"5\" data-width=\"1920\" data-height=\"1080\">\n      <section id=\"cena\">\n        <h1 id=\"titulo\">Vídeo é código</h1>\n        <div id=\"linha\"></div>\n        <p id=\"sub\">Uma página HTML, um relógio, um MP4.</p>\n      </section>\n    </div>\n    <script>\n      const tl = gsap.timeline({ paused: true });\n      tl.fromTo(\"#titulo\", { y: 60, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: \"power3.out\" }, 0.3);\n      tl.fromTo(\"#linha\", { scaleX: 0 }, { scaleX: 1, duration: 0.7, ease: \"power2.inOut\" }, 0.9);\n      tl.fromTo(\"#sub\", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: \"power2.out\" }, 1.4);\n      window.__timelines[\"main\"] = tl;\n    </script>\n  </body>\n</html>"
+        },
+        {
+          "rot": "Terminal · check, render e conferir",
+          "icone": "play",
+          "conteudo": "K=~/projetos/formacao-cinema-ia-motion-v72/kit\nexport HYPERFRAMES_NO_TELEMETRY=1 NO_COLOR=1\ncd ${TMPDIR:-/tmp}/ensaio-motion/a2/minha-abertura\ncp \"$K/exemplos/a2-ola/index.html\" index.html\nnpx -y hyperframes@0.8.176 check 2>&1 | grep -E \"◇|✗|⚠\"\nnpx -y hyperframes@0.8.176 render --quality draft --workers 2 --quiet --output renders/abertura.mp4 > render.log 2>&1\necho \"render: $?\"\npython3 \"$K/conferir.py\" renders/abertura.mp4 5 1920x1080; echo \"saída: $?\""
+        }
+      ],
+      "saida": {
+        "selo": "real",
+        "abas": [
+          {
+            "rot": "Saída capturada (19/10/2026)",
+            "html": "<pre>  ◇ 0 errors, 0 warnings\n  ◇ 0 errors, 0 warnings\n  ◇ 0 issues across 9 sample(s)\n  ◇ 0 errors, 0 warnings\n  ◇ 7/7 text checks pass WCAG AA\n  ◇ disabled\n◇  Check passed\nrender: 0\nOK: 5,0 s · 1920×1080 · 30 fps · sem áudio\nsaída: 0</pre><p>As cinco primeiras linhas ◇ são as partes do check (lint, execução, layout, movimento, contraste); a sexta, disabled, é a captura de quadros, que vem desligada (--snapshots liga). O conferidor lê o MP4 com ffprobe e compara com o que você pediu: 5 s, 1920×1080.</p>"
+          },
+          {
+            "rot": "Erro comum: clipe com filhos",
+            "html": "<p>Pôr data-start numa seção que tem título e texto dentro fez o lint do 0.8.176 avisar <code>nested_structure_needs_subcomposition</code>. No exemplo, a seção é só um contêiner (sem data-start) e a timeline anima os filhos; cena com vários elementos próprios vira subcomposição.</p>"
+          }
+        ]
+      }
+    },
+    {
+      "tipo": "codigo",
+      "titulo": "Para o agente trabalhar com as regras certas",
+      "sub": "O HyperFrames publica skills para agentes (pesquisa, §5). O init já deixa um AGENTS.md e um CLAUDE.md na pasta do projeto.",
+      "blocos": [
+        {
+          "rot": "Opcional · instalar as skills oficiais no seu agente",
+          "icone": "robo",
+          "conteudo": "npx skills add heygen-com/hyperframes"
+        }
+      ]
+    },
+    {
+      "tipo": "pratica",
+      "titulo": "Prática",
+      "sub": "Do init ao MP4 conferido, e uma mudança sua.",
+      "exercicios": [
+        {
+          "id": "e1",
+          "titulo": "E1 · Criar o projeto",
+          "min": "5 min",
+          "texto": "Rode o bloco \"criar o projeto e ver o que veio\".",
+          "pronto": "A saída mostra <code>saída: 0</code>, a lista com <code>index.html</code> e <code>package.json</code>, a linha <code>hyperframes@0.8.176 render</code> e <code>Status:     disabled</code>."
+        },
+        {
+          "id": "e2",
+          "titulo": "E2 · Primeiro MP4",
+          "min": "10 min",
+          "texto": "Rode o bloco \"check, render e conferir\".",
+          "pronto": "<code>◇  Check passed</code>, <code>render: 0</code> e <code>OK: 5,0 s · 1920×1080 · 30 fps · sem áudio</code> com <code>saída: 0</code>."
+        },
+        {
+          "id": "e3",
+          "titulo": "E3 · Oito segundos",
+          "min": "10 min",
+          "texto": "No index.html do seu projeto, mude data-duration da raiz para 8, troque o título por um seu, rode check e render de novo.",
+          "pronto": "<code>python3 ~/projetos/formacao-cinema-ia-motion-v72/kit/conferir.py renders/abertura.mp4 8 1920x1080; echo \"saída: $?\"</code> → <code>OK: 8,0 s · 1920×1080 · 30 fps · sem áudio</code> e <code>saída: 0</code>."
+        }
+      ]
+    },
+    {
+      "tipo": "quiz",
+      "titulo": "Teste da aula",
+      "sub": "A explicação aparece depois da sua resposta.",
+      "perguntas": [
+        {
+          "p": "O que define a duração do MP4 no HyperFrames?",
+          "opcoes": [
+            "O tamanho da timeline GSAP.",
+            "O data-duration da raiz da composição.",
+            "O --fps do render.",
+            "A duração do clipe mais longo."
+          ],
+          "certa": 1,
+          "explica": "A raiz manda: uma timeline mais curta segura o último quadro, e clipe com data-start que passa do fim é cortado (o lint avisa com clip_ends_past_root_duration). Sem data-duration, o motor deduz a duração da timeline.",
+          "ref": "diagrama"
+        },
+        {
+          "p": "O check passou, mas o render saiu errado. Qual destes o check NÃO garante?",
+          "opcoes": [
+            "Que não há erro de JavaScript rodando na página.",
+            "Que nenhum texto sai para fora do quadro.",
+            "Que o vídeo conta a história certa.",
+            "Que o contraste do texto passa no WCAG AA."
+          ],
+          "certa": 2,
+          "explica": "O check confere técnica: execução, layout, movimento, contraste. Se a peça diz a coisa certa é com você, olhando os quadros (aula 3).",
+          "ref": "codigo"
+        },
+        {
+          "p": "Por que o curso fixa hyperframes@0.8.176 em todo comando?",
+          "opcoes": [
+            "Para o bloco dar a mesma saída daqui a meses.",
+            "Porque versões novas deixaram de renderizar MP4.",
+            "Porque o npx não aceita rodar outra versão.",
+            "Para não precisar baixar o navegador de novo."
+          ],
+          "certa": 0,
+          "explica": "O pacote muda toda semana (os cursos antigos usavam 0.8.66). Versão fixa no bloco e no package.json do init é o que faz a saída capturada continuar valendo.",
+          "ref": "codigo"
+        },
+        {
+          "p": "Como desligar a telemetria só na sessão do terminal?",
+          "opcoes": [
+            "Apagando a pasta ~/.hyperframes da sua máquina.",
+            "Rodando todos os comandos com a opção --quiet.",
+            "Desinstalando o Chrome que o render baixou.",
+            "export HYPERFRAMES_NO_TELEMETRY=1."
+          ],
+          "certa": 3,
+          "explica": "As duas variáveis desligam enquanto a sessão durar; hyperframes telemetry disable grava a escolha. O --quiet só reduz o texto na tela.",
+          "ref": "codigo"
+        }
+      ]
+    },
+    {
+      "tipo": "resumo",
+      "titulo": "Em três frases",
+      "itens": [
+        {
+          "t": "Raiz",
+          "texto": "data-composition-id, tamanho e duração; clipes com data-start."
+        },
+        {
+          "t": "Uma timeline",
+          "texto": "GSAP pausada em window.__timelines com a mesma chave da raiz."
+        },
+        {
+          "t": "Portão",
+          "texto": "check antes do render, conferidor depois; versão fixa e telemetria desligada."
+        }
+      ]
+    },
+    {
+      "tipo": "links",
+      "titulo": "Para ir além",
+      "links": [
+        {
+          "t": "HyperFrames: repositório oficial",
+          "href": "https://github.com/heygen-com/hyperframes",
+          "icone": "git"
+        },
+        {
+          "t": "GSAP: documentação da timeline",
+          "href": "https://gsap.com/docs/v3/GSAP/Timeline/",
+          "icone": "relogio"
+        },
+        {
+          "t": "INEMA Motion Lab: 20 peças de motion de interface",
+          "href": "https://inematds.github.io/inema-motion-lab/guia/",
+          "icone": "video"
+        }
+      ]
+    }
+  ]
+}

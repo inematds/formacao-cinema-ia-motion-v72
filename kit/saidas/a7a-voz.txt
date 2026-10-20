@@ -1,0 +1,4 @@
+tts: 0
+4.074667
+transcribe: 0
+palavras: 14

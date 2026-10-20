@@ -1,0 +1,284 @@
+{
+  "slug": "remotion",
+  "num": 5,
+  "menu": "Remotion",
+  "titulo": "Remotion: frame, interpolate, spring e quando escolher React",
+  "titulo_curto": "Remotion",
+  "minutos": 15,
+  "lead": "Remotion faz o mesmo que o HyperFrames com outra linguagem: cada quadro é um componente React que recebe o número do quadro. interpolate mapeia quadros em valores e spring dá física à entrada. Nesta aula você renderiza a mesma ideia da aula 2 em React, lê a licença e decide quando cada motor vale mais.",
+  "objetivo": "renderizar uma composição Remotion com interpolate e spring e decidir entre Remotion e HyperFrames.",
+  "competencias": [
+    "renderizar-remotion",
+    "usar-interpolate-e-spring",
+    "escolher-motor"
+  ],
+  "aprende": [
+    {
+      "icone": "arquivo",
+      "t": "Composition: id, fps, duração em quadros e tamanho"
+    },
+    {
+      "icone": "grafico",
+      "t": "interpolate com clamp e easing; spring com amortecimento"
+    },
+    {
+      "icone": "cadeado",
+      "t": "A licença do Remotion em out/2026"
+    },
+    {
+      "icone": "alvo",
+      "t": "HyperFrames ou Remotion: o critério da escolha"
+    }
+  ],
+  "hero_alt": "Monitor de edição com uma curva de animação suave desenhada como gráfico e uma linha do tempo de quadros embaixo.",
+  "secoes": [
+    {
+      "tipo": "diagrama",
+      "titulo": "O Remotion por dentro",
+      "sub": "Clique em cada peça. Compare com o diagrama da aula 1: é o mesmo desenho em React.",
+      "nos": [
+        {
+          "icone": "arquivo",
+          "titulo": "Composition",
+          "sub": "registro",
+          "detalhe": "<code>&lt;Composition id=\"Abertura\" durationInFrames={150} fps={30} width={1920} height={1080} /&gt;</code>. A duração é em quadros: 150 a 30 fps = 5 s. O id é o nome que o render pede."
+        },
+        {
+          "icone": "relogio",
+          "titulo": "Quadro",
+          "sub": "useCurrentFrame",
+          "detalhe": "O componente recebe o número do quadro e devolve o desenho daquele quadro. Mesmo quadro, mesmo desenho."
+        },
+        {
+          "icone": "grafico",
+          "titulo": "Curvas",
+          "sub": "interpolate · spring",
+          "detalhe": "interpolate(frame, [20, 60], [0, 640]) leva de 0 a 640 entre os quadros 20 e 60; clamp segura nas pontas; easing muda a curva. spring dá uma entrada com física de mola, de 0 a 1."
+        },
+        {
+          "icone": "video",
+          "titulo": "render",
+          "sub": "CLI",
+          "forte": true,
+          "detalhe": "npx remotion render src/index.tsx Abertura out/abertura.mp4. --concurrency limita quantas abas renderizam juntas."
+        }
+      ],
+      "legenda": "HyperFrames: tempo em segundos e GSAP. Remotion: tempo em quadros e React."
+    },
+    {
+      "tipo": "codigo",
+      "titulo": "A composição em React",
+      "sub": "Título com spring, filete e subtítulo com interpolate. O package.json fixa remotion 4.0.537 (npm, 19/10/2026).",
+      "blocos": [
+        {
+          "rot": "Arquivo · kit/remotion/src/index.tsx",
+          "icone": "arquivo",
+          "conteudo": "import {AbsoluteFill, Composition, Easing, interpolate, registerRoot, spring, useCurrentFrame, useVideoConfig} from 'remotion';\n\n// Tudo é função do quadro atual: o mesmo quadro desenha sempre a mesma imagem.\nconst Abertura: React.FC = () => {\n  const frame = useCurrentFrame();\n  const {fps} = useVideoConfig();\n  // spring: entra com física (0 → 1), começando no quadro 10\n  const entra = spring({frame: frame - 10, fps, config: {damping: 200}});\n  // interpolate: mapeia quadros para valores; clamp segura o valor nas pontas\n  const apoio = interpolate(frame, [30, 50], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});\n  const barra = interpolate(frame, [20, 60], [0, 640], {\n    extrapolateLeft: 'clamp',\n    extrapolateRight: 'clamp',\n    easing: Easing.inOut(Easing.cubic),\n  });\n  return (\n    <AbsoluteFill style={{background: '#0c0c10', justifyContent: 'center', paddingLeft: 200, fontFamily: 'system-ui, sans-serif'}}>\n      <h1 style={{color: '#f4f4f5', fontSize: 120, lineHeight: 1.1, margin: 0, opacity: entra, transform: `translateY(${(1 - entra) * 60}px)`}}>\n        Vídeo é React\n      </h1>\n      <div style={{width: barra, height: 6, background: '#e9b949', margin: '36px 0'}} />\n      <p style={{color: '#a1a1aa', fontSize: 48, margin: 0, opacity: apoio}}>Um componente, um quadro, um MP4.</p>\n    </AbsoluteFill>\n  );\n};\n\nconst Raiz: React.FC = () => (\n  <Composition id=\"Abertura\" component={Abertura} durationInFrames={150} fps={30} width={1920} height={1080} />\n);\n\nregisterRoot(Raiz);"
+        },
+        {
+          "rot": "Arquivo · kit/remotion/package.json",
+          "icone": "arquivo",
+          "conteudo": "{\n  \"name\": \"abertura-remotion\",\n  \"private\": true,\n  \"description\": \"Ensaio do curso Motion por código com agente (INEMA.CLUB): uma composição Remotion mínima.\",\n  \"scripts\": {\n    \"render\": \"remotion render src/index.tsx Abertura out/abertura.mp4\"\n  },\n  \"dependencies\": {\n    \"@remotion/cli\": \"4.0.537\",\n    \"react\": \"19.3.1\",\n    \"react-dom\": \"19.3.1\",\n    \"remotion\": \"4.0.537\"\n  }\n}"
+        },
+        {
+          "rot": "Terminal · instalar, renderizar e conferir",
+          "icone": "play",
+          "conteudo": "K=~/projetos/formacao-cinema-ia-motion-v72/kit\nE=${TMPDIR:-/tmp}/ensaio-motion/a5; rm -rf \"$E\"; mkdir -p \"$E/remotion\"\ncp -r \"$K\"/remotion/{package.json,package-lock.json,src} \"$E/remotion/\"; cd \"$E/remotion\"\nnpm ci --no-audit --no-fund > npm.log 2>&1; echo \"npm: $?\"\nnpx remotion render src/index.tsx Abertura out/abertura.mp4 --concurrency=2 > render.log 2>&1\necho \"render: $?\"\npython3 \"$K/conferir.py\" out/abertura.mp4 5 1920x1080; echo \"saída: $?\""
+        }
+      ],
+      "saida": {
+        "selo": "real",
+        "abas": [
+          {
+            "rot": "Saída capturada (19/10/2026)",
+            "html": "<pre>npm: 0\nrender: 0\nOK: 5,0 s · 1920×1080 · 30 fps · sem áudio\nsaída: 0</pre><p>O npm ci instala 245 MB em node_modules (medido nesta máquina). O primeiro render pode baixar o navegador que o Remotion usa.</p>"
+          }
+        ]
+      }
+    },
+    {
+      "tipo": "codigo",
+      "titulo": "O erro mais comum, isolado",
+      "sub": "Pedir o render com o id em minúscula.",
+      "blocos": [
+        {
+          "rot": "Terminal · render com o id errado",
+          "icone": "x",
+          "conteudo": "cd ${TMPDIR:-/tmp}/ensaio-motion/a5/remotion\nnpx remotion render src/index.tsx abertura out/errado.mp4 2>&1 | grep -m1 -o \"Could not find composition.*\"\necho \"render: ${PIPESTATUS[0]}\""
+        },
+        {
+          "rot": "Opcional · skills oficiais do Remotion para o agente",
+          "icone": "robo",
+          "conteudo": "npx skills add remotion-dev/skills"
+        }
+      ],
+      "saida": {
+        "selo": "real",
+        "abas": [
+          {
+            "rot": "Saída capturada (19/10/2026)",
+            "html": "<pre>Could not find composition with ID abertura. Available compositions: Abertura\nrender: 1</pre><p>O id diferencia maiúscula de minúscula. A mensagem lista os ids que existem: copie de lá.</p>"
+          }
+        ]
+      }
+    },
+    {
+      "tipo": "passos",
+      "titulo": "Licença e escolha",
+      "sub": "O que ler antes de usar num projeto de empresa.",
+      "passos": [
+        {
+          "titulo": "Licença hoje",
+          "sub": "4.0.x",
+          "texto": [
+            "O LICENSE.md do Remotion libera o uso grátis para pessoa física, organização sem fins lucrativos e empresa de até 3 pessoas; acima disso, a empresa precisa da licença paga.",
+            "O HyperFrames é Apache-2.0: uso livre, inclusive comercial."
+          ]
+        },
+        {
+          "titulo": "O que vem",
+          "sub": "5.0",
+          "texto": [
+            "A página de migração do Remotion 5.0 cita uma mudança de licença (contratados passariam a contar no time). Em 19/10/2026 a 5.0 não tinha saído e a regra não estava confirmada: releia o LICENSE.md quando atualizar."
+          ]
+        },
+        {
+          "titulo": "Quando React",
+          "sub": "Remotion",
+          "texto": [
+            "Equipe que já escreve React, componentes reaproveitados de um app, dados passados por props, vídeo gerado dentro de um produto em React."
+          ]
+        },
+        {
+          "titulo": "Quando HTML",
+          "sub": "HyperFrames",
+          "texto": [
+            "Peça que um agente escreve do zero, sem build; check com layout e contraste embutido; snapshot de quadros; TTS e transcrição locais no mesmo CLI (aula 7)."
+          ]
+        }
+      ]
+    },
+    {
+      "tipo": "pratica",
+      "titulo": "Prática",
+      "sub": "O ensaio, o erro e uma mudança sua.",
+      "exercicios": [
+        {
+          "id": "e1",
+          "titulo": "E1 · Primeiro MP4 em React",
+          "min": "10 min",
+          "texto": "Rode o bloco \"instalar, renderizar e conferir\".",
+          "pronto": "<code>npm: 0</code>, <code>render: 0</code> e <code>OK: 5,0 s · 1920×1080 · 30 fps · sem áudio</code> com <code>saída: 0</code>."
+        },
+        {
+          "id": "e2",
+          "titulo": "E2 · Ler o erro",
+          "min": "5 min",
+          "texto": "Rode o bloco do id errado.",
+          "pronto": "<code>Could not find composition with ID abertura. Available compositions: Abertura</code> e <code>render: 1</code>."
+        },
+        {
+          "id": "e3",
+          "titulo": "E3 · Seis segundos e outra curva",
+          "min": "15 min",
+          "texto": "Em /tmp/ensaio-motion/a5/remotion/src/index.tsx, mude durationInFrames para 180 e o easing da barra para Easing.out(Easing.exp). Renderize de novo com o mesmo comando do bloco.",
+          "pronto": "<code>python3 ~/projetos/formacao-cinema-ia-motion-v72/kit/conferir.py out/abertura.mp4 6 1920x1080; echo \"saída: $?\"</code> → <code>OK: 6,0 s · 1920×1080 · 30 fps · sem áudio</code> e <code>saída: 0</code>."
+        }
+      ]
+    },
+    {
+      "tipo": "quiz",
+      "titulo": "Teste da aula",
+      "sub": "A explicação aparece depois da sua resposta.",
+      "perguntas": [
+        {
+          "p": "durationInFrames={150} a fps={30} dá quantos segundos?",
+          "opcoes": [
+            "150 s",
+            "30 s",
+            "5 s",
+            "4,5 s"
+          ],
+          "certa": 2,
+          "explica": "Duração em quadros dividida pelos quadros por segundo: 150 ÷ 30 = 5. No HyperFrames você escreve direto data-duration=\"5\".",
+          "ref": "diagrama"
+        },
+        {
+          "p": "Para que serve o extrapolateRight: 'clamp' no interpolate?",
+          "opcoes": [
+            "Segurar o valor na ponta da faixa depois do fim.",
+            "Fazer a animação voltar ao início quando termina.",
+            "Fazer o render usar menos memória em cada quadro.",
+            "Garantir que o valor nunca passe do número 1."
+          ],
+          "certa": 0,
+          "explica": "Sem clamp, o interpolate continua a reta: depois do quadro 60 a barra passaria de 640 px. O clamp segura o valor na ponta da faixa.",
+          "ref": "codigo"
+        },
+        {
+          "p": "Uma empresa de 12 pessoas quer usar o Remotion 4 em vídeos de cliente. O que fazer antes?",
+          "opcoes": [
+            "Nada: o Remotion é código aberto e sempre grátis.",
+            "Ler o LICENSE.md: acima de 3 pessoas é paga.",
+            "Trocar para a versão 5.0, que libera o uso para empresas.",
+            "Usar só o HyperFrames, porque o Remotion proíbe empresas."
+          ],
+          "certa": 1,
+          "explica": "Na 4.0.x o Remotion é grátis para pessoa física, organização sem fins lucrativos e empresa de até 3 pessoas; acima disso, licença paga. A 5.0 não tinha saído em 19/10/2026: releia o LICENSE.md a cada atualização.",
+          "ref": "passos"
+        },
+        {
+          "p": "Quando o Remotion costuma valer mais que o HyperFrames?",
+          "opcoes": [
+            "Quando o agente vai escrever a peça do zero, em HTML puro.",
+            "Quando você precisa de voz local no mesmo CLI do render.",
+            "Quando a peça é um único título animado de poucos segundos.",
+            "Quando a equipe já tem componentes React."
+          ],
+          "certa": 3,
+          "explica": "O ganho do Remotion é o ecossistema React: componentes, props e tipos. Para peça escrita do zero por agente, o HTML do HyperFrames tem menos peças para dar errado.",
+          "ref": "passos"
+        }
+      ]
+    },
+    {
+      "tipo": "resumo",
+      "titulo": "Em três frases",
+      "itens": [
+        {
+          "t": "Quadro",
+          "texto": "No Remotion tudo é função do número do quadro: interpolate e spring desenham a curva."
+        },
+        {
+          "t": "Licença",
+          "texto": "Grátis até 3 pessoas na 4.0.x; leia o LICENSE.md a cada atualização."
+        },
+        {
+          "t": "Escolha",
+          "texto": "React quando há React para reaproveitar; HTML quando o agente escreve do zero."
+        }
+      ]
+    },
+    {
+      "tipo": "links",
+      "titulo": "Para ir além",
+      "links": [
+        {
+          "t": "Remotion: licença (LICENSE.md)",
+          "href": "https://github.com/remotion-dev/remotion/blob/main/LICENSE.md",
+          "icone": "cadeado"
+        },
+        {
+          "t": "Remotion: skills para agentes",
+          "href": "https://www.remotion.dev/docs/ai/skills",
+          "icone": "robo"
+        },
+        {
+          "t": "Remotion: interpolate()",
+          "href": "https://www.remotion.dev/docs/interpolate",
+          "icone": "grafico"
+        }
+      ]
+    }
+  ]
+}

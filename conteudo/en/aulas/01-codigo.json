@@ -1,0 +1,291 @@
+{
+  "slug": "codigo",
+  "num": 1,
+  "menu": "Code",
+  "titulo": "Video is code: a composition with time and deterministic render",
+  "titulo_curto": "Video is code",
+  "minutos": 15,
+  "lead": "In motion graphics as code, the video is a page that knows how to draw any instant. A headless browser asks for frame 0, then 1, then 2, and FFmpeg stitches them into an MP4. If the same input always gives the same frames, you can redo, fix, and version the video like code. In this lesson you prove it on your own machine.",
+  "objetivo": "prove on your own machine that the same composition gives the same frames, and find what breaks that.",
+  "competencias": [
+    "modelo-mental-composicao-tempo-render",
+    "provar-determinismo",
+    "achar-fonte-de-acaso"
+  ],
+  "aprende": [
+    {
+      "icone": "camadas",
+      "t": "The four pieces: composition, clock, headless browser, and encoder"
+    },
+    {
+      "icone": "lupa",
+      "t": "Compare two renders frame by frame with one command"
+    },
+    {
+      "icone": "x",
+      "t": "Why Math.random and Date.now break the video"
+    },
+    {
+      "icone": "check",
+      "t": "Seeded random: variety without losing repeatability"
+    }
+  ],
+  "hero_alt": "A film strip on a cold light table, with a white circle that grows from frame to frame.",
+  "secoes": [
+    {
+      "tipo": "diagrama",
+      "titulo": "From code to MP4",
+      "sub": "Tap each piece. HyperFrames (HTML) and Remotion (React) follow the same design.",
+      "nos": [
+        {
+          "icone": "arquivo",
+          "titulo": "Composition",
+          "sub": "HTML or React",
+          "detalhe": "A file that describes what is on screen and how it changes over time. In HyperFrames it is an index.html with data-* attributes; in Remotion, a React component. It is text: it fits in git and the agent edits it.",
+          "itens": [
+            {
+              "icone": "arquivo",
+              "t": "index.html",
+              "sub": "HyperFrames"
+            },
+            {
+              "icone": "arquivo",
+              "t": "index.tsx",
+              "sub": "Remotion"
+            }
+          ]
+        },
+        {
+          "icone": "relogio",
+          "titulo": "Clock",
+          "sub": "t or frame",
+          "detalhe": "The engine doesn't let the animation run on its own: it asks for an exact instant (2.5 s, or frame 75 at 30 fps) and the composition draws that instant. That's why you can jump to any point."
+        },
+        {
+          "icone": "chip",
+          "titulo": "Browser",
+          "sub": "headless",
+          "detalhe": "A windowless Chrome opens the composition, goes to the requested instant, and takes a picture of the frame. On first use HyperFrames downloads this browser (about 240 MB as of 10/19/2026)."
+        },
+        {
+          "icone": "video",
+          "titulo": "Encoder",
+          "sub": "FFmpeg",
+          "detalhe": "FFmpeg stitches the photos together in order and writes the MP4 (H.264). If the photos are the same, so is the final file.",
+          "forte": true
+        }
+      ],
+      "volta": "same input → same frames",
+      "legenda": "Deterministic = run it twice in the same environment and get the same frames. That's what lets you fix one detail without redoing the rest.",
+      "dica": "Across different machines, GPU and fonts can change a few pixels; to repeat it on another machine, the 0.8.176 render has --docker (\"deterministic render\") and --no-browser-gpu."
+    },
+    {
+      "tipo": "passos",
+      "titulo": "What breaks repeatability",
+      "sub": "Three sources of chance that the HyperFrames lint looks for.",
+      "passos": [
+        {
+          "titulo": "Random draw",
+          "sub": "Math.random",
+          "texto": [
+            "Each render draws again: the same 12 points show up in different places.",
+            "The fix is a seeded draw (mulberry32): the same seed gives the same numbers, every time."
+          ],
+          "exemplo": {
+            "rot": "Fix",
+            "texto": "const sorteio = mulberry32(42); then sorteio() in place of Math.random()."
+          }
+        },
+        {
+          "titulo": "Machine clock",
+          "sub": "Date.now",
+          "texto": [
+            "The current time changes with every render and every frame.",
+            "Everything that animates has to come from the time the engine provides, never from the computer's clock."
+          ]
+        },
+        {
+          "titulo": "Network at render time",
+          "sub": "fetch",
+          "texto": [
+            "Fetching data from the internet during the render can bring back a different answer or fail midway.",
+            "Fetch it beforehand, save it to a file in the folder, and read it from there (lesson 7 does this with the captions)."
+          ]
+        }
+      ]
+    },
+    {
+      "tipo": "codigo",
+      "titulo": "The test run: two renders, compared frame by frame",
+      "sub": "Two nearly identical compositions: one uses Math.random, the other a seeded draw. Each one is rendered twice and compared by the hash of each frame.",
+      "blocos": [
+        {
+          "rot": "Git · clone the course (once)",
+          "icone": "git",
+          "conteudo": "git clone https://github.com/inematds/formacao-cinema-ia-motion-v72 ~/projetos/formacao-cinema-ia-motion-v72"
+        },
+        {
+          "rot": "Terminal · two renders of each and the comparison",
+          "icone": "play",
+          "conteudo": "K=~/projetos/formacao-cinema-ia-motion-v72/kit\nexport HYPERFRAMES_NO_TELEMETRY=1\nE=${TMPDIR:-/tmp}/ensaio-motion/a1; rm -rf \"$E\"; mkdir -p \"$E\"\nfor ex in a1-sorteio a1-semente; do\n  cp -r \"$K/exemplos/$ex\" \"$E/$ex\"; cd \"$E/$ex\"\n  for n in 1 2; do\n    npx -y hyperframes@0.8.176 render --quality draft --workers 1 --quiet --output \"render-$n.mp4\" > /dev/null 2>&1\n  done\n  echo \"## $ex\"; bash \"$K/comparar-quadros.sh\" render-1.mp4 render-2.mp4; echo \"saída: $?\"\ndone"
+        }
+      ],
+      "saida": {
+        "selo": "real",
+        "abas": [
+          {
+            "rot": "Captured output (10/19/2026)",
+            "html": "<pre>## a1-sorteio\nDIFEREM: 89 de 90 quadros\nsaída: 1\n## a1-semente\nIGUAIS: 90/90 quadros\nsaída: 0</pre><p>That's 90 frames (3 s at 30 fps). With Math.random only the first one matches; with the seed, all 90 do. The first render downloads hyperframes@0.8.176 and the browser, so it takes longer.</p>"
+          },
+          {
+            "rot": "Common mistake: comparing the whole file",
+            "html": "<p>Comparing the MP4 with <code>md5sum</code> can come out different even when the frames are the same (file metadata). The <code>comparar-quadros.sh</code> script decodes the file and compares the image of each frame with <code>ffmpeg -f framemd5</code>.</p>"
+          }
+        ]
+      }
+    },
+    {
+      "tipo": "codigo",
+      "titulo": "The lint finds the chance before the render",
+      "sub": "The same pair of compositions run through the HyperFrames lint. It points to the line and suggests the seed.",
+      "blocos": [
+        {
+          "rot": "Terminal · lint of both compositions",
+          "icone": "lupa",
+          "conteudo": "K=~/projetos/formacao-cinema-ia-motion-v72/kit\nexport HYPERFRAMES_NO_TELEMETRY=1 NO_COLOR=1\nfor ex in a1-sorteio a1-semente; do\n  cd \"$K/exemplos/$ex\"\n  npx -y hyperframes@0.8.176 lint; echo \"saída: $?\"\ndone"
+        }
+      ],
+      "saida": {
+        "selo": "real",
+        "abas": [
+          {
+            "rot": "Captured output (10/19/2026)",
+            "html": "<pre>◆  Linting a1-sorteio/index.html\n\n  ✗ [~/projetos/formacao-cinema-ia-motion-v72/kit/exemplos/a1-sorteio/index.html:24:24] non_deterministic_code: Script contains `Math.random()` which produces non-deterministic output. Renders may differ between frames or runs.\n    Fix: Use a seeded PRNG (e.g. a simple mulberry32) so renders are deterministic across frames.\n\n◇  1 error(s), 0 warning(s)\nsaída: 1\n◆  Linting a1-semente/index.html\n\n◇  0 errors, 0 warnings\nsaída: 0</pre><p>The lint exits with code 1 when it finds an error: you can use it as a gate before any render.</p>"
+          }
+        ]
+      }
+    },
+    {
+      "tipo": "pratica",
+      "titulo": "Practice",
+      "sub": "Test run, lint, and your seed.",
+      "exercicios": [
+        {
+          "id": "e1",
+          "titulo": "E1 · See the chance and the seed",
+          "min": "10 min",
+          "texto": "Clone the course into ~/projetos and run the \"two renders of each and the comparison\" block.",
+          "pronto": "a1-sorteio ends with <code>DIFEREM: 89 de 90 quadros</code> and <code>saída: 1</code>; a1-semente with <code>IGUAIS: 90/90 quadros</code> and <code>saída: 0</code>. (On your computer the number of differing frames may vary; what can't happen is the seed giving a different result.)"
+        },
+        {
+          "id": "e2",
+          "titulo": "E2 · The lint as a gate",
+          "min": "5 min",
+          "texto": "Run the lint block.",
+          "pronto": "a1-sorteio shows <code>non_deterministic_code</code> and <code>saída: 1</code>; a1-semente shows <code>0 errors, 0 warnings</code> and <code>saída: 0</code>."
+        },
+        {
+          "id": "e3",
+          "titulo": "E3 · Another seed, same guarantee",
+          "min": "10 min",
+          "texto": "In /tmp/ensaio-motion/a1/a1-semente, replace mulberry32(42) with mulberry32(7), render twice (render-3.mp4 and render-4.mp4, using the same command from the block), and compare: 3 with 4, then 1 with 3.",
+          "pronto": "<code>bash ~/projetos/formacao-cinema-ia-motion-v72/kit/comparar-quadros.sh render-3.mp4 render-4.mp4</code> → <code>IGUAIS: 90/90 quadros</code>; the same with <code>render-1.mp4 render-3.mp4</code> → starts with <code>DIFEREM:</code>."
+        }
+      ]
+    },
+    {
+      "tipo": "quiz",
+      "titulo": "Lesson quiz",
+      "sub": "The explanation appears after you answer.",
+      "perguntas": [
+        {
+          "p": "Who decides which instant the composition draws?",
+          "opcoes": [
+            "The render engine, which asks for an exact time on every frame.",
+            "The browser, drawing at whatever speed the machine can manage.",
+            "FFmpeg, which picks the frames when it assembles the MP4.",
+            "The graphics card, depending on the computer's load."
+          ],
+          "certa": 0,
+          "explica": "The engine asks for the moment (2.5 s, frame 75) and the composition draws that moment. That's why speed doesn't change the result: in the same environment, a slow machine takes longer, but gives the same frames.",
+          "ref": "diagrama"
+        },
+        {
+          "p": "Two renders of the same composition came out with 89 of 90 frames different. What should you look for first?",
+          "opcoes": [
+            "A different encoder between the two renders.",
+            "Math.random, Date.now, or a network fetch inside the composition.",
+            "Running out of memory on the second render.",
+            "A font that didn't load in time."
+          ],
+          "certa": 1,
+          "explica": "Randomness inside the composition is the most common cause, and the lint points to Math.random by line. Both renders used the same hyperframes@0.8.176 and the same FFmpeg: what changed was the input.",
+          "ref": "passos"
+        },
+        {
+          "p": "What is a seeded random draw for?",
+          "opcoes": [
+            "To make the render faster on a slow machine.",
+            "To make the lint stop complaining without changing anything in the result.",
+            "To make the variety repeat identically on every render.",
+            "To make each render come out as a new, different version."
+          ],
+          "certa": 2,
+          "explica": "The seed fixes the sequence of numbers: the points are still scattered, but always in the same places. Changing the seed changes the pattern on purpose, and again in a repeatable way.",
+          "ref": "codigo"
+        },
+        {
+          "p": "Why compare frame by frame and not the whole MP4?",
+          "opcoes": [
+            "Because md5sum can't read large MP4 files.",
+            "Because comparing frames is much faster than reading the file.",
+            "Because FFmpeg can only hash frames, not files.",
+            "Because metadata changes the file even when the images are identical."
+          ],
+          "certa": 3,
+          "explica": "What matters is the image. framemd5 decodes each frame and compares the pixels; the hash of the whole file also changes with metadata that never shows on screen.",
+          "ref": "codigo"
+        }
+      ]
+    },
+    {
+      "tipo": "resumo",
+      "titulo": "In three sentences",
+      "itens": [
+        {
+          "t": "Composition + clock",
+          "texto": "The video is a page that draws any instant the engine asks for."
+        },
+        {
+          "t": "Determinism",
+          "texto": "Same input, same frames: that's what lets you fix one detail without redoing the rest."
+        },
+        {
+          "t": "Controlled randomness",
+          "texto": "Seeded draw, engine time, and data saved in the folder; the lint keeps watch."
+        }
+      ]
+    },
+    {
+      "tipo": "links",
+      "titulo": "Going further",
+      "links": [
+        {
+          "t": "HyperFrames on GitHub (code and Apache-2.0 license)",
+          "href": "https://github.com/heygen-com/hyperframes",
+          "icone": "git"
+        },
+        {
+          "t": "Remotion: official documentation",
+          "href": "https://www.remotion.dev/docs/",
+          "icone": "arquivo"
+        },
+        {
+          "t": "Course 0 of the program: Direction (shot, camera, and light)",
+          "href": "https://inematds.github.io/formacao-cinema-ia-direcao-v72/en/",
+          "icone": "video"
+        }
+      ]
+    }
+  ]
+}

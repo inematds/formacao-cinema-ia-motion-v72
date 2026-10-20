@@ -1,0 +1,7 @@
+## sem data-duration
+root_composition_missing_duration_source
+1 error(s), 0 warning(s)
+## com data-duration
+0 errors, 0 warnings
+OK: 4,0 s · 1920×1080 · 30 fps · sem áudio
+saída: 0
